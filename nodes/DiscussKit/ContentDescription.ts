@@ -34,7 +34,7 @@ export const contentOperations: INodeProperties[] = [
 			},
 			{
 				name: 'Get Many',
-				value: 'getAll',
+				value: 'list',
 				description: 'Get many contents',
 				action: 'Get many contents',
 			},
@@ -43,12 +43,24 @@ export const contentOperations: INodeProperties[] = [
 				value: 'pin',
 				description: 'Pin content',
 				action: 'Pin content',
+				displayOptions: {
+					show: {
+						resource: ['discussion'],
+						operation: ['pin'],
+					},
+				},
 			},
 			{
 				name: 'Publish',
 				value: 'publish',
 				description: 'Publish content',
 				action: 'Publish content',
+				displayOptions: {
+					show: {
+						resource: ['discussion', 'blog'],
+						operation: ['publish'],
+					},
+				},
 			},
 			{
 				name: 'Update',
@@ -97,7 +109,7 @@ export const contentFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['discussion', 'blog', 'doc', 'bookmark'],
-				operation: ['create', 'update'],
+				operation: ['create', 'update', 'list'],
 			},
 		},
 		default: '',
@@ -217,7 +229,7 @@ export const contentFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['discussion', 'blog', 'doc', 'bookmark'],
-				operation: ['getAll'],
+				operation: ['list'],
 			},
 		},
 		default: false,
@@ -230,7 +242,7 @@ export const contentFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['discussion', 'blog', 'doc', 'bookmark'],
-				operation: ['getAll'],
+				operation: ['list'],
 				returnAll: [false],
 			},
 		},

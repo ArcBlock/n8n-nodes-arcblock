@@ -325,33 +325,37 @@ export class DiscussKit implements INodeType {
 						);
 					}
 
-					if (operation === 'getAll') {
+					if (operation === 'list') {
 						const returnAll = this.getNodeParameter('returnAll', i);
 						const limit = this.getNodeParameter('limit', i, 0);
+						const boardId = this.getNodeParameter('boardId', i) as string;
+						if (boardId) {
+							qs.boardId = boardId;
+						}
 
 						result = await discussKitApiRequest.call(this, 'GET', `/api/${resource}s`, {}, qs);
-						result = result.latest_posts;
+						result = Array.isArray(result) ? result : result.data;
 
-						//Getting all posts relying on https://github.com/discourse/discourse_api/blob/main/spec/discourse_api/api/posts_spec.rb
 						let lastPost = result.pop();
-						let previousLastPostID;
-						while (lastPost.id !== previousLastPostID) {
-							if (limit && result.length > limit) {
-								break;
+						if (lastPost) {
+							let previousId;
+							while (lastPost.id !== previousId) {
+								if (limit && result.length > limit) {
+									break;
+								}
+								const chunk = await discussKitApiRequest.call(
+									this,
+									'GET',
+									`/api/${resource}s`,
+									{},
+									qs,
+								);
+								result = result.concat(Array.isArray(chunk) ? chunk : chunk.data);
+								previousId = lastPost.id;
+								lastPost = result.pop();
 							}
-							const chunk = await discussKitApiRequest.call(
-								this,
-								'GET',
-								`/api/${resource}s`,
-								{},
-								qs,
-							);
-							result = result.concat(chunk.latest_posts);
-							previousLastPostID = lastPost.id;
-							lastPost = result.pop();
+							result.push(lastPost);
 						}
-						result.push(lastPost);
-
 						if (!returnAll) {
 							result = result.splice(0, limit);
 						}
