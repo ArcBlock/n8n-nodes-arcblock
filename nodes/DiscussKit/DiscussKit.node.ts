@@ -12,7 +12,7 @@ import {
 import { labelFields, labelOperations } from './LabelDescription';
 import { discussKitApiRequest } from './GenericFunctions';
 import { boardFields, boardOperations } from './BoardDescription';
-import { discussionFields, discussionOperations } from './DiscussionDescription';
+import { contentFields, contentOperations } from './ContentDescription';
 import { searchFields, searchOperations } from './SearchDescription';
 
 export class DiscussKit implements INodeType {
@@ -78,8 +78,8 @@ export class DiscussKit implements INodeType {
 			...labelFields,
 			...boardOperations,
 			...boardFields,
-			...discussionOperations,
-			...discussionFields,
+			...contentOperations,
+			...contentFields,
 			...searchOperations,
 			...searchFields,
 		],
@@ -160,6 +160,7 @@ export class DiscussKit implements INodeType {
 						}
 					}
 				}
+
 				if (['discussion', 'blog', 'bookmark', 'doc'].includes(resource)) {
 					if (operation === 'create') {
 						const title = this.getNodeParameter('title', i) as string;
@@ -167,14 +168,26 @@ export class DiscussKit implements INodeType {
 						const boardId = this.getNodeParameter('boardId', i) as string;
 						const labels = this.getNodeParameter('labels', i) as string;
 						const assignees = this.getNodeParameter('assignees', i) as string;
+						const locale = this.getNodeParameter('locale', i) as string;
+						const slug = this.getNodeParameter('slug', i) as string;
 
 						const body: IDataObject = {
 							type: resource,
 							title,
 							content,
-							boardId,
 						};
 
+						if (locale) {
+							body.locale = locale;
+						}
+						if (slug) {
+							body.slug = slug;
+						}
+						if (boardId) {
+							body.boardId = boardId;
+						} else {
+							body.boardId = `${resource}-default`;
+						}
 						if (labels) {
 							body.labels = labels.split(',');
 						}
@@ -186,7 +199,72 @@ export class DiscussKit implements INodeType {
 							responseData = await discussKitApiRequest.call(this, 'POST', '/api/posts/drafts', body);
 							responseData = await discussKitApiRequest.call(this, 'POST', `/api/posts/${responseData.id}/publish`, body);
 						}
+						if (resource === 'blog') {
+							responseData = await discussKitApiRequest.call(this, 'POST', '/api/blogs', body);
+							responseData = await discussKitApiRequest.call(this, 'POST', `/api/blogs/${responseData.id}/publish`, body);
+							responseData = await discussKitApiRequest.call(this, 'GET', `/api/blogs/${responseData.id}?locale=${locale}`);
+						}
+						if (resource === 'doc') {
+							responseData = await discussKitApiRequest.call(this, 'POST', '/api/docs', body);
+						}
+						if (resource === 'bookmark') {
+							// FIXME:
+						}
 					}
+
+					if (operation === 'update') {
+						const id = this.getNodeParameter('id', i) as string;
+						const title = this.getNodeParameter('title', i) as string;
+						const content = this.getNodeParameter('content', i) as string;
+						const boardId = this.getNodeParameter('boardId', i) as string;
+						const labels = this.getNodeParameter('labels', i) as string;
+						const assignees = this.getNodeParameter('assignees', i) as string;
+
+						const body: IDataObject = {};
+						if (title) {
+							body.title = title;
+						}
+						if (content) {
+							body.content = content;
+						}
+						if (boardId) {
+							body.boardId = boardId;
+						}
+						if (labels) {
+							body.labels = labels.split(',');
+						}
+						if (assignees) {
+							body.assignees = assignees.split(',');
+						}
+						if (resource === 'discussion') {
+							responseData = await discussKitApiRequest.call(this, 'PUT', `/api/posts/${id}`, body);
+						}
+						if (resource === 'blog') {
+							responseData = await discussKitApiRequest.call(this, 'PUT', `/api/blogs/${id}`, body);
+						}
+						if (resource === 'doc') {
+							responseData = await discussKitApiRequest.call(this, 'PUT', `/api/docs/${id}`, body);
+						}
+						if (resource === 'bookmark') {
+							// FIXME:
+						}
+					}
+
+					if (operation === 'publish') {
+						const id = this.getNodeParameter('id', i) as string;
+						if (resource === 'discussion') {
+							responseData = await discussKitApiRequest.call(this, 'POST', `/api/posts/${id}/publish`, {});
+						}
+						if (resource === 'blog') {
+							responseData = await discussKitApiRequest.call(this, 'POST', `/api/blogs/${id}/publish`, {});
+						}
+					}
+
+					if (operation === 'delete') {
+						const id = this.getNodeParameter('id', i) as string;
+						responseData = await discussKitApiRequest.call(this, 'DELETE', `/api/${resource}s/${id}`, {});
+					}
+
 					if (operation === 'get') {
 						const id = this.getNodeParameter('id', i) as string;
 						responseData = await discussKitApiRequest.call(
