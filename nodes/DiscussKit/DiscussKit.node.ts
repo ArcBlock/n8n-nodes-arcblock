@@ -163,13 +163,16 @@ export class DiscussKit implements INodeType {
 
 				if (['discussion', 'blog', 'bookmark', 'doc'].includes(resource)) {
 					if (operation === 'create') {
+						let locale = 'en';
+						let order = -1;
+						let parentId = '';
+						let slug = '';
+
 						const title = this.getNodeParameter('title', i) as string;
 						const content = this.getNodeParameter('content', i) as string;
 						const boardId = this.getNodeParameter('boardId', i) as string;
 						const labels = this.getNodeParameter('labels', i) as string;
 						const assignees = this.getNodeParameter('assignees', i) as string;
-						const locale = this.getNodeParameter('locale', i) as string;
-						const slug = this.getNodeParameter('slug', i) as string;
 
 						const body: IDataObject = {
 							type: resource,
@@ -177,9 +180,6 @@ export class DiscussKit implements INodeType {
 							content,
 						};
 
-						if (locale) {
-							body.locale = locale;
-						}
 						if (slug) {
 							body.slug = slug;
 						}
@@ -195,18 +195,56 @@ export class DiscussKit implements INodeType {
 							body.assignees = assignees.split(',');
 						}
 
+						if (resource === 'blog' || resource === 'doc') {
+							locale = this.getNodeParameter('locale', i) as string;
+							slug = this.getNodeParameter('slug', i) as string;
+							if (locale) {
+								body.locale = locale;
+							}
+							if (slug) {
+								body.slug = slug;
+							}
+						}
+						if (resource === 'doc') {
+							order = this.getNodeParameter('order', i) as number;
+							parentId = this.getNodeParameter('parentId', i) as string;
+							if (parentId) {
+								body.parentId = parentId;
+							}
+							if (order) {
+								body.order = order;
+							}
+						}
+
 						if (resource === 'discussion') {
 							result = await discussKitApiRequest.call(this, 'POST', '/api/posts/drafts', body);
-							result = await discussKitApiRequest.call(this, 'POST', `/api/posts/${result.id}/publish`, body);
+							result = await discussKitApiRequest.call(
+								this,
+								'POST',
+								`/api/posts/${result.id}/publish`,
+								body,
+							);
 						}
 						if (resource === 'blog') {
 							result = await discussKitApiRequest.call(this, 'POST', '/api/blogs', body);
-							result = await discussKitApiRequest.call(this, 'POST', `/api/blogs/${result.id}/publish`, body);
-							result = await discussKitApiRequest.call(this, 'GET', `/api/blogs/${result.id}?locale=${locale}`);
+							result = await discussKitApiRequest.call(
+								this,
+								'POST',
+								`/api/blogs/${result.id}/publish`,
+								body,
+							);
+							result = await discussKitApiRequest.call(
+								this,
+								'GET',
+								`/api/blogs/${result.id}?locale=${locale}`,
+							);
 						}
 						if (resource === 'doc') {
 							result = await discussKitApiRequest.call(this, 'POST', '/api/docs', body);
-							result = await discussKitApiRequest.call(this, 'PUT', `/api/docs/${result.id}`, { ...result, ...body });
+							result = await discussKitApiRequest.call(this, 'PUT', `/api/docs/${result.id}`, {
+								...result,
+								...body,
+							});
 						}
 						if (resource === 'bookmark') {
 							// FIXME:
@@ -254,10 +292,20 @@ export class DiscussKit implements INodeType {
 					if (operation === 'publish') {
 						const id = this.getNodeParameter('id', i) as string;
 						if (resource === 'discussion') {
-							result = await discussKitApiRequest.call(this, 'POST', `/api/posts/${id}/publish`, {});
+							result = await discussKitApiRequest.call(
+								this,
+								'POST',
+								`/api/posts/${id}/publish`,
+								{},
+							);
 						}
 						if (resource === 'blog') {
-							result = await discussKitApiRequest.call(this, 'POST', `/api/blogs/${id}/publish`, {});
+							result = await discussKitApiRequest.call(
+								this,
+								'POST',
+								`/api/blogs/${id}/publish`,
+								{},
+							);
 						}
 					}
 

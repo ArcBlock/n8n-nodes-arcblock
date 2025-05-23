@@ -183,6 +183,32 @@ export const contentFields: INodeProperties[] = [
 		default: '',
 		description: 'Slug of the content',
 	},
+	{
+		displayName: 'Parent ID',
+		name: 'parentId',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['doc'],
+				operation: ['create', 'update'],
+			},
+		},
+		default: '',
+		description: 'ID of the parent content',
+	},
+	{
+		displayName: 'Display Order',
+		name: 'order',
+		type: 'number',
+		displayOptions: {
+			show: {
+				resource: ['doc'],
+				operation: ['create', 'update'],
+			},
+		},
+		default: -1,
+		description: 'Display order of the content',
+	},
 
 	{
 		displayName: 'Return All',
