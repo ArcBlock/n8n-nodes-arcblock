@@ -108,7 +108,7 @@ export class DiscussKit implements INodeType {
 		const returnData: INodeExecutionData[] = [];
 		const length = items.length;
 		const qs: IDataObject = {};
-		let responseData;
+		let result;
 		const resource = this.getNodeParameter('resource', 0);
 		const operation = this.getNodeParameter('operation', 0);
 		for (let i = 0; i < length; i++) {
@@ -125,15 +125,15 @@ export class DiscussKit implements INodeType {
 							text_color: textColor,
 						};
 
-						responseData = await discussKitApiRequest.call(this, 'POST', '/api/boards', body);
+						result = await discussKitApiRequest.call(this, 'POST', '/api/boards', body);
 					}
 					if (operation === 'getAll') {
 						const returnAll = this.getNodeParameter('returnAll', i);
-						responseData = await discussKitApiRequest.call(this, 'GET', '/api/boards', {}, qs);
-						responseData = responseData.boards;
+						result = await discussKitApiRequest.call(this, 'GET', '/api/boards', {}, qs);
+						result = result.boards;
 						if (!returnAll) {
 							const limit = this.getNodeParameter('limit', i);
-							responseData = responseData.splice(0, limit);
+							result = result.splice(0, limit);
 						}
 					}
 				}
@@ -145,18 +145,18 @@ export class DiscussKit implements INodeType {
 							name,
 						};
 
-						responseData = await discussKitApiRequest.call(this, 'POST', '/api/labels', {
+						result = await discussKitApiRequest.call(this, 'POST', '/api/labels', {
 							group: body,
 						});
 					}
 					if (operation === 'getAll') {
 						const returnAll = this.getNodeParameter('returnAll', i);
-						responseData = await discussKitApiRequest.call(this, 'GET', '/api/labels', {}, qs);
-						responseData = responseData.labels;
+						result = await discussKitApiRequest.call(this, 'GET', '/api/labels', {}, qs);
+						result = result.labels;
 
 						if (!returnAll) {
 							const limit = this.getNodeParameter('limit', i);
-							responseData = responseData.splice(0, limit);
+							result = result.splice(0, limit);
 						}
 					}
 				}
@@ -196,16 +196,17 @@ export class DiscussKit implements INodeType {
 						}
 
 						if (resource === 'discussion') {
-							responseData = await discussKitApiRequest.call(this, 'POST', '/api/posts/drafts', body);
-							responseData = await discussKitApiRequest.call(this, 'POST', `/api/posts/${responseData.id}/publish`, body);
+							result = await discussKitApiRequest.call(this, 'POST', '/api/posts/drafts', body);
+							result = await discussKitApiRequest.call(this, 'POST', `/api/posts/${result.id}/publish`, body);
 						}
 						if (resource === 'blog') {
-							responseData = await discussKitApiRequest.call(this, 'POST', '/api/blogs', body);
-							responseData = await discussKitApiRequest.call(this, 'POST', `/api/blogs/${responseData.id}/publish`, body);
-							responseData = await discussKitApiRequest.call(this, 'GET', `/api/blogs/${responseData.id}?locale=${locale}`);
+							result = await discussKitApiRequest.call(this, 'POST', '/api/blogs', body);
+							result = await discussKitApiRequest.call(this, 'POST', `/api/blogs/${result.id}/publish`, body);
+							result = await discussKitApiRequest.call(this, 'GET', `/api/blogs/${result.id}?locale=${locale}`);
 						}
 						if (resource === 'doc') {
-							responseData = await discussKitApiRequest.call(this, 'POST', '/api/docs', body);
+							result = await discussKitApiRequest.call(this, 'POST', '/api/docs', body);
+							result = await discussKitApiRequest.call(this, 'PUT', `/api/docs/${result.id}`, { ...result, ...body });
 						}
 						if (resource === 'bookmark') {
 							// FIXME:
@@ -237,13 +238,13 @@ export class DiscussKit implements INodeType {
 							body.assignees = assignees.split(',');
 						}
 						if (resource === 'discussion') {
-							responseData = await discussKitApiRequest.call(this, 'PUT', `/api/posts/${id}`, body);
+							result = await discussKitApiRequest.call(this, 'PUT', `/api/posts/${id}`, body);
 						}
 						if (resource === 'blog') {
-							responseData = await discussKitApiRequest.call(this, 'PUT', `/api/blogs/${id}`, body);
+							result = await discussKitApiRequest.call(this, 'PUT', `/api/blogs/${id}`, body);
 						}
 						if (resource === 'doc') {
-							responseData = await discussKitApiRequest.call(this, 'PUT', `/api/docs/${id}`, body);
+							result = await discussKitApiRequest.call(this, 'PUT', `/api/docs/${id}`, body);
 						}
 						if (resource === 'bookmark') {
 							// FIXME:
@@ -253,21 +254,21 @@ export class DiscussKit implements INodeType {
 					if (operation === 'publish') {
 						const id = this.getNodeParameter('id', i) as string;
 						if (resource === 'discussion') {
-							responseData = await discussKitApiRequest.call(this, 'POST', `/api/posts/${id}/publish`, {});
+							result = await discussKitApiRequest.call(this, 'POST', `/api/posts/${id}/publish`, {});
 						}
 						if (resource === 'blog') {
-							responseData = await discussKitApiRequest.call(this, 'POST', `/api/blogs/${id}/publish`, {});
+							result = await discussKitApiRequest.call(this, 'POST', `/api/blogs/${id}/publish`, {});
 						}
 					}
 
 					if (operation === 'delete') {
 						const id = this.getNodeParameter('id', i) as string;
-						responseData = await discussKitApiRequest.call(this, 'DELETE', `/api/${resource}s/${id}`, {});
+						result = await discussKitApiRequest.call(this, 'DELETE', `/api/${resource}s/${id}`, {});
 					}
 
 					if (operation === 'get') {
 						const id = this.getNodeParameter('id', i) as string;
-						responseData = await discussKitApiRequest.call(
+						result = await discussKitApiRequest.call(
 							this,
 							'GET',
 							`/api/${resource}s/${id}`,
@@ -275,18 +276,19 @@ export class DiscussKit implements INodeType {
 							qs,
 						);
 					}
+
 					if (operation === 'getAll') {
 						const returnAll = this.getNodeParameter('returnAll', i);
 						const limit = this.getNodeParameter('limit', i, 0);
 
-						responseData = await discussKitApiRequest.call(this, 'GET', `/api/${resource}s`, {}, qs);
-						responseData = responseData.latest_posts;
+						result = await discussKitApiRequest.call(this, 'GET', `/api/${resource}s`, {}, qs);
+						result = result.latest_posts;
 
 						//Getting all posts relying on https://github.com/discourse/discourse_api/blob/main/spec/discourse_api/api/posts_spec.rb
-						let lastPost = responseData.pop();
+						let lastPost = result.pop();
 						let previousLastPostID;
 						while (lastPost.id !== previousLastPostID) {
-							if (limit && responseData.length > limit) {
+							if (limit && result.length > limit) {
 								break;
 							}
 							const chunk = await discussKitApiRequest.call(
@@ -296,32 +298,15 @@ export class DiscussKit implements INodeType {
 								{},
 								qs,
 							);
-							responseData = responseData.concat(chunk.latest_posts);
+							result = result.concat(chunk.latest_posts);
 							previousLastPostID = lastPost.id;
-							lastPost = responseData.pop();
+							lastPost = result.pop();
 						}
-						responseData.push(lastPost);
+						result.push(lastPost);
 
 						if (!returnAll) {
-							responseData = responseData.splice(0, limit);
+							result = result.splice(0, limit);
 						}
-					}
-					if (operation === 'update') {
-						const id = this.getNodeParameter('id', i) as string;
-						const content = this.getNodeParameter('content', i) as string;
-
-						const body: IDataObject = {
-							content,
-						};
-
-						responseData = await discussKitApiRequest.call(
-							this,
-							'PUT',
-							`/api/${resource}s/${id}`,
-							body,
-						);
-
-						responseData = responseData.post;
 					}
 				}
 
@@ -338,12 +323,12 @@ export class DiscussKit implements INodeType {
 						qs.offset = this.getNodeParameter('offset', i) as number;
 						qs.limit = this.getNodeParameter('limit', i) as number;
 
-						responseData = await discussKitApiRequest.call(this, 'GET', '/api/search', {}, qs);
+						result = await discussKitApiRequest.call(this, 'GET', '/api/search', {}, qs);
 					}
 				}
 
 				const executionData = this.helpers.constructExecutionMetaData(
-					this.helpers.returnJsonArray(responseData as IDataObject[]),
+					this.helpers.returnJsonArray(result as IDataObject[]),
 					{ itemData: { item: i } },
 				);
 				returnData.push(...executionData);
