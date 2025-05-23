@@ -156,7 +156,7 @@ export const boardFields: INodeProperties[] = [
 	/* -------------------------------------------------------------------------- */
 	{
 		displayName: 'Board ID',
-		name: 'groupId',
+		name: 'id',
 		type: 'string',
 		required: true,
 		displayOptions: {

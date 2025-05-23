@@ -42,10 +42,13 @@ export class MarkdownToLexical implements INodeType {
 
 		for (let itemIndex = 0; itemIndex < items.length; itemIndex++) {
 			try {
-				markdown = this.getNodeParameter('markdown', itemIndex, '') as string;
 				item = items[itemIndex];
-
-				item.json.lexical = await markdownToLexical(markdown);
+				markdown = this.getNodeParameter('markdown', itemIndex, '') as string;
+				if (markdown) {
+					item.json.lexicalJson = JSON.stringify(await markdownToLexical(markdown));
+				} else {
+					item.json.lexicalJson = '';
+				}
 			} catch (error) {
 				if (this.continueOnFail()) {
 					items.push({ json: this.getInputData(itemIndex)[0].json, error, pairedItem: itemIndex });

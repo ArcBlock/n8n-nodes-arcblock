@@ -129,11 +129,8 @@ export class DiscussKit implements INodeType {
 					}
 					if (operation === 'getAll') {
 						const returnAll = this.getNodeParameter('returnAll', i);
-
 						responseData = await discussKitApiRequest.call(this, 'GET', '/api/boards', {}, qs);
-
 						responseData = responseData.boards;
-
 						if (!returnAll) {
 							const limit = this.getNodeParameter('limit', i);
 							responseData = responseData.splice(0, limit);
@@ -154,9 +151,7 @@ export class DiscussKit implements INodeType {
 					}
 					if (operation === 'getAll') {
 						const returnAll = this.getNodeParameter('returnAll', i);
-
 						responseData = await discussKitApiRequest.call(this, 'GET', '/api/labels', {}, qs);
-
 						responseData = responseData.labels;
 
 						if (!returnAll) {
@@ -165,31 +160,48 @@ export class DiscussKit implements INodeType {
 						}
 					}
 				}
-				if (resource === 'post') {
+				if (['discussion', 'blog', 'bookmark', 'doc'].includes(resource)) {
 					if (operation === 'create') {
-						const content = this.getNodeParameter('content', i) as string;
 						const title = this.getNodeParameter('title', i) as string;
-						const additionalFields = this.getNodeParameter('additionalFields', i);
+						const content = this.getNodeParameter('content', i) as string;
+						const boardId = this.getNodeParameter('boardId', i) as string;
+						const labels = this.getNodeParameter('labels', i) as string;
+						const assignees = this.getNodeParameter('assignees', i) as string;
 
 						const body: IDataObject = {
+							type: resource,
 							title,
-							raw: content,
+							content,
+							boardId,
 						};
 
-						Object.assign(body, additionalFields);
+						if (labels) {
+							body.labels = labels.split(',');
+						}
+						if (assignees) {
+							body.assignees = assignees.split(',');
+						}
 
-						responseData = await discussKitApiRequest.call(this, 'POST', '/posts.json', body);
+						if (resource === 'discussion') {
+							responseData = await discussKitApiRequest.call(this, 'POST', '/api/posts/drafts', body);
+							responseData = await discussKitApiRequest.call(this, 'POST', `/api/posts/${responseData.id}/publish`, body);
+						}
 					}
 					if (operation === 'get') {
-						const postId = this.getNodeParameter('postId', i) as string;
-
-						responseData = await discussKitApiRequest.call(this, 'GET', `/posts/${postId}`, {}, qs);
+						const id = this.getNodeParameter('id', i) as string;
+						responseData = await discussKitApiRequest.call(
+							this,
+							'GET',
+							`/api/${resource}s/${id}`,
+							{},
+							qs,
+						);
 					}
 					if (operation === 'getAll') {
 						const returnAll = this.getNodeParameter('returnAll', i);
 						const limit = this.getNodeParameter('limit', i, 0);
 
-						responseData = await discussKitApiRequest.call(this, 'GET', '/posts.json', {}, qs);
+						responseData = await discussKitApiRequest.call(this, 'GET', `/api/${resource}s`, {}, qs);
 						responseData = responseData.latest_posts;
 
 						//Getting all posts relying on https://github.com/discourse/discourse_api/blob/main/spec/discourse_api/api/posts_spec.rb
@@ -202,7 +214,7 @@ export class DiscussKit implements INodeType {
 							const chunk = await discussKitApiRequest.call(
 								this,
 								'GET',
-								`/posts.json?before=${lastPost.id}`,
+								`/api/${resource}s`,
 								{},
 								qs,
 							);
@@ -217,28 +229,24 @@ export class DiscussKit implements INodeType {
 						}
 					}
 					if (operation === 'update') {
-						const postId = this.getNodeParameter('postId', i) as string;
-
+						const id = this.getNodeParameter('id', i) as string;
 						const content = this.getNodeParameter('content', i) as string;
 
-						const updateFields = this.getNodeParameter('updateFields', i);
-
 						const body: IDataObject = {
-							raw: content,
+							content,
 						};
-
-						Object.assign(body, updateFields);
 
 						responseData = await discussKitApiRequest.call(
 							this,
 							'PUT',
-							`/posts/${postId}.json`,
+							`/api/${resource}s/${id}`,
 							body,
 						);
 
 						responseData = responseData.post;
 					}
 				}
+
 				if (resource === 'search') {
 					if (operation === 'query') {
 						qs.q = this.getNodeParameter('q', i) as string;
@@ -252,13 +260,7 @@ export class DiscussKit implements INodeType {
 						qs.offset = this.getNodeParameter('offset', i) as number;
 						qs.limit = this.getNodeParameter('limit', i) as number;
 
-						responseData = await discussKitApiRequest.call(
-							this,
-							'GET',
-							'/api/search',
-							{},
-							qs,
-						);
+						responseData = await discussKitApiRequest.call(this, 'GET', '/api/search', {}, qs);
 					}
 				}
 

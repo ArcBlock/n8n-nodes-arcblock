@@ -190,7 +190,7 @@ export const labelFields: INodeProperties[] = [
 	/* -------------------------------------------------------------------------- */
 	{
 		displayName: 'Label ID',
-		name: 'labelId',
+		name: 'id',
 		type: 'string',
 		required: true,
 		displayOptions: {
