@@ -8,6 +8,7 @@ import {
 	INodeTypeDescription,
 	NodeConnectionType,
 } from 'n8n-workflow';
+import { v4 as uuidv4 } from 'uuid';
 
 import { labelFields, labelOperations } from './LabelDescription';
 import { discussKitApiRequest } from './GenericFunctions';
@@ -168,21 +169,19 @@ export class DiscussKit implements INodeType {
 						let parentId = '';
 						let slug = '';
 
-						const title = this.getNodeParameter('title', i) as string;
-						const content = this.getNodeParameter('content', i) as string;
 						const boardId = this.getNodeParameter('boardId', i) as string;
 						const labels = this.getNodeParameter('labels', i) as string;
 						const assignees = this.getNodeParameter('assignees', i) as string;
 
 						const body: IDataObject = {
 							type: resource,
-							title,
-							content,
 						};
 
-						if (slug) {
-							body.slug = slug;
+						if (resource !== 'bookmark') {
+							body.title = this.getNodeParameter('title', i) as string;
+							body.content = this.getNodeParameter('content', i) as string;
 						}
+
 						if (boardId) {
 							body.boardId = boardId;
 						} else {
@@ -247,7 +246,34 @@ export class DiscussKit implements INodeType {
 							});
 						}
 						if (resource === 'bookmark') {
-							// FIXME:
+							const url = this.getNodeParameter('url', i) as string;
+							const id = uuidv4();
+							const og = await discussKitApiRequest.call(
+								this,
+								'GET',
+								'/api/embed/og',
+								{},
+								{ url, includeRaw: true, timeout: 60000 },
+							);
+							const payload: IDataObject = {
+								content: '',
+								object: {
+									...body,
+									id,
+									title: og.title || og['twitter:title'] || og['og:title'] || 'Title',
+									excerpt:
+										og.description ||
+										og['twitter:description'] ||
+										og['og:description'] ||
+										'Description',
+									cover: og.image || og['twitter:image'] || og['og:image'] || '',
+									originLink: url,
+									type: 'bookmark',
+								},
+							};
+
+							result = await discussKitApiRequest.call(this, 'POST', '/api/comments', payload);
+							result = await discussKitApiRequest.call(this, 'GET', `/api/bookmarks/${id}`, {});
 						}
 					}
 

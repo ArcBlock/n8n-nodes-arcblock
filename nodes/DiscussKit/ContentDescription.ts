@@ -136,7 +136,7 @@ export const contentFields: INodeProperties[] = [
 		description: 'Comma-separated DIDs of assignees',
 		displayOptions: {
 			show: {
-				resource: ['discussion', 'blog', 'doc', 'bookmark'],
+				resource: ['discussion', 'blog', 'doc'],
 				operation: ['create', 'update'],
 			},
 		},
@@ -220,6 +220,20 @@ export const contentFields: INodeProperties[] = [
 		},
 		default: -1,
 		description: 'Display order of the content',
+	},
+	{
+		displayName: 'URL',
+		name: 'url',
+		type: 'string',
+		displayOptions: {
+			show: {
+				resource: ['bookmark'],
+				operation: ['create'],
+			},
+		},
+		default: '',
+		required: true,
+		description: 'URL of the bookmark',
 	},
 
 	{
