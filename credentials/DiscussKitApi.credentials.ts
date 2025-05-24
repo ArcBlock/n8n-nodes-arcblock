@@ -5,6 +5,7 @@ import type {
 	IHttpRequestOptions,
 	INodeProperties,
 } from 'n8n-workflow';
+import { joinURL } from 'ufo';
 
 export class DiscussKitApi implements ICredentialType {
 	name = 'discussKitApi';
@@ -37,6 +38,27 @@ export class DiscussKitApi implements ICredentialType {
 		credentials: ICredentialDataDecryptedObject,
 		requestOptions: IHttpRequestOptions,
 	): Promise<IHttpRequestOptions> {
+		const url = new URL(credentials.url as string);
+		const blockletJsUrl = `${url.origin}/__blocklet__.js?type=json`;
+
+		const response = await fetch(blockletJsUrl, {
+			method: "GET",
+			headers: {
+				Accept: "application/json",
+			}
+		});
+		if (!response.ok) {
+			throw new Error(`Failed to fetch blocklet json: ${response.status} ${response.statusText}, ${blockletJsUrl}`);
+		}
+
+		const config = await response.json();
+		const component = config.componentMountPoints.find((component: any) => component.did === 'z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu');
+		if (!component) {
+			throw new Error(`Discuss Kit not found in: ${credentials.url}`);
+		}
+
+		requestOptions.baseURL = url.origin;
+		requestOptions.url = joinURL(component.mountPoint, requestOptions.url);
 		requestOptions.headers = {
 			'Authorization': `Bearer ${credentials.accessKey}`,
 		};

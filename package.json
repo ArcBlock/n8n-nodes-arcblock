@@ -63,6 +63,7 @@
     "lexical": "^0.30.0",
     "lodash": "^4.17.21",
     "marked": "^15.0.8",
+    "ufo": "^1.6.1",
     "uuid": "^11.1.0"
   },
   "peerDependencies": {

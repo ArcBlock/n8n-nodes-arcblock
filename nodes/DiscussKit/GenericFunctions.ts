@@ -12,18 +12,15 @@ export async function discussKitApiRequest(
 	this: IExecuteFunctions | ILoadOptionsFunctions,
 	method: IHttpRequestMethods,
 	path: string,
-
 	body: any = {},
 	qs: IDataObject = {},
 	_option = {},
 ): Promise<any> {
-	const credentials = await this.getCredentials<{ url: string }>('discussKitApi');
-
 	const options: IRequestOptions = {
 		method,
 		body,
 		qs,
-		uri: `${credentials.url}${path}`,
+		url: path,
 		json: true,
 	};
 
