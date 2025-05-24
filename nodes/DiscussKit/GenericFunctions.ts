@@ -28,7 +28,7 @@ export async function discussKitApiRequest(
 		if (Object.keys(body as IDataObject).length === 0) {
 			delete options.body;
 		}
-		return await this.helpers.requestWithAuthentication.call(this, 'discussKitApi', options);
+		return await this.helpers.requestWithAuthentication.call(this, 'blockletApi', options);
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject);
 	}

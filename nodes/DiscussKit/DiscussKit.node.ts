@@ -33,7 +33,7 @@ export class DiscussKit implements INodeType {
 		outputs: [NodeConnectionType.Main],
 		credentials: [
 			{
-				name: 'discussKitApi',
+				name: 'blockletApi',
 				required: false,
 			},
 		],
@@ -87,6 +87,7 @@ export class DiscussKit implements INodeType {
 	};
 
 	methods = {
+		// FIXME: @wangshijun
 		loadOptions: {
 			// Get all the calendars to display them to user so that they can
 			// select them easily
