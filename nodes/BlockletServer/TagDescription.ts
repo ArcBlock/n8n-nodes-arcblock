@@ -45,6 +45,20 @@ export const tagOperations: INodeProperties[] = [
 
 export const tagFields: INodeProperties[] = [
 	{
+		displayName: 'App DID',
+		name: 'teamDid',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['tag'],
+				operation: ['createTag', 'getTags', 'updateTag', 'deleteTag'],
+			},
+		},
+		default: '',
+		description: 'DID of the blocklet app (team)',
+	},
+	{
 		displayName: 'ID',
 		name: 'id',
 		type: 'string',
