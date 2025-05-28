@@ -1,9 +1,7 @@
 import {
 	IExecuteFunctions,
 	IDataObject,
-	ILoadOptionsFunctions,
 	INodeExecutionData,
-	INodePropertyOptions,
 	INodeType,
 	INodeTypeDescription,
 	NodeConnectionType,
@@ -84,25 +82,6 @@ export class DiscussKit implements INodeType {
 			...searchOperations,
 			...searchFields,
 		],
-	};
-
-	methods = {
-		// FIXME: @wangshijun
-		loadOptions: {
-			// Get all the calendars to display them to user so that they can
-			// select them easily
-			async getCategories(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
-				const returnData: INodePropertyOptions[] = [];
-				const { category_list } = await discussKitApiRequest.call(this, 'GET', '/categories.json');
-				for (const category of category_list.categories) {
-					returnData.push({
-						name: category.name,
-						value: category.id,
-					});
-				}
-				return returnData;
-			},
-		},
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
