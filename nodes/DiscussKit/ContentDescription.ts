@@ -15,6 +15,18 @@ export const contentOperations: INodeProperties[] = [
 		},
 		options: [
 			{
+				name: 'Add Assignee',
+				value: 'addAssignee',
+				description: 'Add assignee to content',
+				action: 'Add assignee to content',
+			},
+			{
+				name: 'Add Label',
+				value: 'addLabel',
+				description: 'Add label to content',
+				action: 'Add label to content',
+			},
+			{
 				name: 'Create',
 				value: 'create',
 				description: 'Create content',
@@ -61,6 +73,18 @@ export const contentOperations: INodeProperties[] = [
 						operation: ['publish'],
 					},
 				},
+			},
+			{
+				name: 'Remove Assignee',
+				value: 'removeAssignee',
+				description: 'Remove assignee from content',
+				action: 'Remove assignee from content',
+			},
+			{
+				name: 'Remove Label',
+				value: 'removeLabel',
+				description: 'Remove label from content',
+				action: 'Remove label from content',
 			},
 			{
 				name: 'Update',
@@ -163,7 +187,7 @@ export const contentFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['discussion', 'blog', 'doc', 'bookmark'],
-				operation: ['get', 'update', 'publish', 'delete', 'pin'],
+				operation: ['get', 'update', 'publish', 'delete', 'pin', 'addLabel', 'removeLabel', 'addAssignee', 'removeAssignee'],
 			},
 		},
 		default: '',
@@ -265,5 +289,31 @@ export const contentFields: INodeProperties[] = [
 		},
 		default: 50,
 		description: 'Max number of results to return',
+	},
+	{
+		displayName: 'Label',
+		name: 'label',
+		type: 'string',
+		default: '',
+		description: 'Label for the content',
+		displayOptions: {
+			show: {
+				resource: ['discussion', 'blog', 'doc', 'bookmark'],
+				operation: ['addLabel', 'removeLabel'],
+			},
+		},
+	},
+	{
+		displayName: 'Assignee',
+		name: 'assignee',
+		type: 'string',
+		default: '',
+		description: 'Assignee for the content',
+		displayOptions: {
+			show: {
+				resource: ['discussion', 'blog', 'doc'],
+				operation: ['addAssignee', 'removeAssignee'],
+			},
+		},
 	},
 ];

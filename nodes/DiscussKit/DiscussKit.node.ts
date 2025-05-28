@@ -316,6 +316,30 @@ export class DiscussKit implements INodeType {
 						}
 					}
 
+					if (operation === 'addLabel') {
+						const id = this.getNodeParameter('id', i) as string;
+						const label = this.getNodeParameter('label', i) as string;
+						await discussKitApiRequest.call(this, 'POST', `/api/posts/${id}/labels`, { label });
+					}
+
+					if (operation === 'removeLabel') {
+						const id = this.getNodeParameter('id', i) as string;
+						const label = this.getNodeParameter('label', i) as string;
+						await discussKitApiRequest.call(this, 'DELETE', `/api/posts/${id}/labels/${label}`);
+					}
+
+					if (operation === 'addAssignee') {
+						const id = this.getNodeParameter('id', i) as string;
+						const assignee = this.getNodeParameter('assignee', i) as string;
+						await discussKitApiRequest.call(this, 'POST', `/api/posts/${id}/assignees`, { assignee });
+					}
+
+					if (operation === 'removeAssignee') {
+						const id = this.getNodeParameter('id', i) as string;
+						const assignee = this.getNodeParameter('assignee', i) as string;
+						await discussKitApiRequest.call(this, 'DELETE', `/api/posts/${id}/assignees/${assignee}`);
+					}
+
 					if (operation === 'publish') {
 						const id = this.getNodeParameter('id', i) as string;
 						if (resource === 'discussion') {
