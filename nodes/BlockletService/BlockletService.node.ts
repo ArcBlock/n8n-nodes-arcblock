@@ -171,8 +171,10 @@ export class BlockletService implements INodeType {
 							const did = this.getNodeParameter('did', i) as string;
 							const approved = this.getNodeParameter('approved', i) as boolean;
 							result = await blockletServiceApiRequest.call(this, 'updateUserApproval', {
-								did,
-								approved,
+								user: {
+									did,
+									approved,
+								},
 							});
 							break;
 						}
