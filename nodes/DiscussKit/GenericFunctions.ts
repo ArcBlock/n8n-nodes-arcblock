@@ -28,28 +28,8 @@ export async function discussKitApiRequest(
 		if (Object.keys(body as IDataObject).length === 0) {
 			delete options.body;
 		}
-		return await this.helpers.requestWithAuthentication.call(this, 'blockletApi', options);
+		return await this.helpers.requestWithAuthentication.call(this, 'blockletComponentApi', options);
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject);
 	}
-}
-
-export async function discussKitApiRequestAllItems(
-	this: IExecuteFunctions | ILoadOptionsFunctions,
-	method: IHttpRequestMethods,
-	endpoint: string,
-
-	body: any = {},
-	query: IDataObject = {},
-): Promise<any> {
-	const returnData: IDataObject[] = [];
-
-	let responseData;
-	query.page = 1;
-	do {
-		responseData = await discussKitApiRequest.call(this, method, endpoint, body, query);
-		returnData.push.apply(returnData, responseData as IDataObject[]);
-		query.page++;
-	} while (responseData.length !== 0);
-	return returnData;
 }

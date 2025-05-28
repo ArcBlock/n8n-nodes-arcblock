@@ -33,7 +33,7 @@ export class DiscussKit implements INodeType {
 		outputs: [NodeConnectionType.Main],
 		credentials: [
 			{
-				name: 'blockletApi',
+				name: 'blockletComponentApi',
 				required: false,
 			},
 		],

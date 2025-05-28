@@ -7,10 +7,10 @@ import type {
 } from 'n8n-workflow';
 import { joinURL } from 'ufo';
 
-export class BlockletApi implements ICredentialType {
-	name = 'blockletApi';
+export class BlockletComponentApi implements ICredentialType {
+	name = 'blockletComponentApi';
 
-	displayName = 'Blocklet API';
+	displayName = 'Blocklet Component API';
 
 	iconUrl = 'https://avatars.githubusercontent.com/u/34142321?s=48&v=4';
 
@@ -37,9 +37,9 @@ export class BlockletApi implements ICredentialType {
 		{
 			displayName: 'Component DID',
 			name: 'componentDid',
-			required: false,
+			required: true,
 			type: 'string',
-			default: '',
+			default: 'z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu',
 			description: 'The DID of the component in your blocklet.',
 		},
 	];
