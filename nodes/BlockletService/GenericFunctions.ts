@@ -7,6 +7,7 @@ import type {
 import { NodeApiError } from 'n8n-workflow';
 
 import Client from '@abtnode/client';
+import { formatError } from '@blocklet/error';
 
 export async function blockletServiceApiRequest(
 	this: IExecuteFunctions | ILoadOptionsFunctions,
@@ -51,7 +52,12 @@ export async function blockletServiceApiRequest(
 			'blockletServiceApi',
 			options,
 		);
-		console.log({ method, result });
+		console.log({ method, args, ...result });
+
+		if (result.errors) {
+			throw new Error(formatError(result.errors[0]));
+		}
+
 		return result.data[method];
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject);

@@ -121,7 +121,7 @@ export const tagFields: INodeProperties[] = [
 				displayName: 'Page Size',
 				name: 'pageSize',
 				type: 'number',
-				default: 20,
+				default: 50,
 				description: 'The number of items per page',
 			},
 		],

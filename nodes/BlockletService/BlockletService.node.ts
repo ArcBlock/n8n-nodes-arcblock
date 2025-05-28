@@ -8,6 +8,9 @@ import {
 	ApplicationError,
 } from 'n8n-workflow';
 
+import omitBy from 'lodash/omitBy';
+import isEmpty from 'lodash/isEmpty';
+
 import { blockletServiceApiRequest } from './GenericFunctions';
 import { tagFields, tagOperations } from './TagDescription';
 import { userFields, userOperations } from './UserDescription';
@@ -85,33 +88,72 @@ export class BlockletService implements INodeType {
 							break;
 						case 'getUser': {
 							const did = this.getNodeParameter('did', i) as string;
-							const enabledConnectedAccount = this.getNodeParameter('enabledConnectedAccount', i) as boolean;
+							const enabledConnectedAccount = this.getNodeParameter(
+								'enabledConnectedAccount',
+								i,
+							) as boolean;
 							const includeTags = this.getNodeParameter('includeTags', i) as boolean;
-							result = await blockletServiceApiRequest.call(this, 'getUser', { did, enabledConnectedAccount, includeTags });
+							result = await blockletServiceApiRequest.call(this, 'getUser', {
+								did,
+								enabledConnectedAccount,
+								includeTags,
+							});
 							break;
 						}
 						case 'getUsers': {
 							const dids = this.getNodeParameter('dids', i) as string[];
 							const includeTags = this.getNodeParameter('includeTags', i) as boolean;
 							const includePassports = this.getNodeParameter('includePassports', i) as boolean;
-							const includeConnectedAccounts = this.getNodeParameter('includeConnectedAccounts', i) as boolean;
+							const includeConnectedAccounts = this.getNodeParameter(
+								'includeConnectedAccounts',
+								i,
+							) as boolean;
 							const role = this.getNodeParameter('role', i) as string;
 							const search = this.getNodeParameter('search', i) as string;
 							const tags = this.getNodeParameter('tags', i) as string[];
-							const paging = this.getNodeParameter('paging', i) as IDataObject;
-							const sort = this.getNodeParameter('sort', i) as IDataObject;
-							result = await blockletServiceApiRequest.call(this, 'getUsers', {
-								dids,
-								query: { includePassports, includeConnectedAccounts, includeTags, role, search, tags },
-								paging,
-								sort
-							});
+							const paging = Object.assign(
+								{ pageSize: 50 },
+								this.getNodeParameter('paging', i) as IDataObject,
+							);
+							const sort = Object.assign(
+								{ createdAt: 0 },
+								this.getNodeParameter('sort', i) as IDataObject,
+							);
+
+							const query: IDataObject = {};
+							if (includePassports) {
+								query.includePassports = true;
+							}
+							if (includeConnectedAccounts) {
+								query.includeConnectedAccounts = true;
+							}
+							if (includeTags) {
+								query.includeTags = true;
+							}
+							if (role) {
+								query.role = role;
+							}
+							if (search) {
+								query.search = search;
+							}
+							if (tags && tags.length > 0) {
+								query.tags = tags;
+							}
+
+							result = await blockletServiceApiRequest.call(
+								this,
+								'getUsers',
+								omitBy({ dids, query, paging, sort }, isEmpty),
+							);
 							break;
 						}
 						case 'updateUserApproval': {
 							const did = this.getNodeParameter('did', i) as string;
 							const approved = this.getNodeParameter('approved', i) as boolean;
-							result = await blockletServiceApiRequest.call(this, 'updateUserApproval', { did, approved });
+							result = await blockletServiceApiRequest.call(this, 'updateUserApproval', {
+								did,
+								approved,
+							});
 							break;
 						}
 						// FIXME:
@@ -138,7 +180,9 @@ export class BlockletService implements INodeType {
 							const title = this.getNodeParameter('title', i) as string;
 							const description = this.getNodeParameter('description', i) as string;
 							const color = this.getNodeParameter('color', i) as string;
-							result = await blockletServiceApiRequest.call(this, 'createTag', { tag: { title, description, color } });
+							result = await blockletServiceApiRequest.call(this, 'createTag', {
+								tag: { title, description, color },
+							});
 							break;
 						}
 						case 'updateTag': {
@@ -146,7 +190,9 @@ export class BlockletService implements INodeType {
 							const title = this.getNodeParameter('title', i) as string;
 							const description = this.getNodeParameter('description', i) as string;
 							const color = this.getNodeParameter('color', i) as string;
-							result = await blockletServiceApiRequest.call(this, 'updateTag', { tag: { id, title, description, color } });
+							result = await blockletServiceApiRequest.call(this, 'updateTag', {
+								tag: { id, title, description, color },
+							});
 							break;
 						}
 						case 'deleteTag': {
@@ -167,7 +213,7 @@ export class BlockletService implements INodeType {
 				if (resource === 'blocklet') {
 					switch (operation) {
 						case 'getBlocklet': {
-							result = await blockletServiceApiRequest.call(this, 'getBlocklet', { });
+							result = await blockletServiceApiRequest.call(this, 'getBlocklet', {});
 							break;
 						}
 						default:
