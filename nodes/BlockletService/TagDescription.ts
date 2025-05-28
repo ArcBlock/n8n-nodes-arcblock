@@ -86,7 +86,7 @@ export const tagFields: INodeProperties[] = [
 	},
 	{
 		displayName: 'Description',
-		name: 'desc',
+		name: 'description',
 		type: 'string',
 		displayOptions: {
 			show: {

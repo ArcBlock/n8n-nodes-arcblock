@@ -51,6 +51,7 @@ export async function blockletServiceApiRequest(
 			'blockletServiceApi',
 			options,
 		);
+		console.log({ method, result });
 		return result.data[method];
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject);

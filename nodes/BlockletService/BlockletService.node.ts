@@ -5,6 +5,7 @@ import {
 	INodeType,
 	INodeTypeDescription,
 	NodeConnectionType,
+	ApplicationError,
 } from 'n8n-workflow';
 
 import { blockletServiceApiRequest } from './GenericFunctions';
@@ -78,73 +79,99 @@ export class BlockletService implements INodeType {
 		for (let i = 0; i < length; i++) {
 			try {
 				if (resource === 'user') {
-					if (operation === 'getOwner') {
-						result = await blockletServiceApiRequest.call(this, 'getOwner', {});
-					}
-					if (operation === 'getUser') {
-						const did = this.getNodeParameter('did', i) as string;
-						const enabledConnectedAccount = this.getNodeParameter('enabledConnectedAccount', i) as boolean;
-						const includeTags = this.getNodeParameter('includeTags', i) as boolean;
-						result = await blockletServiceApiRequest.call(this, 'getUser', { did, enabledConnectedAccount, includeTags });
-					}
-					if (operation === 'getUsers') {
-						const dids = this.getNodeParameter('dids', i) as string[];
-						const includeTags = this.getNodeParameter('includeTags', i) as boolean;
-						const includePassports = this.getNodeParameter('includePassports', i) as boolean;
-						const includeConnectedAccounts = this.getNodeParameter('includeConnectedAccounts', i) as boolean;
-						const role = this.getNodeParameter('role', i) as string;
-						const search = this.getNodeParameter('search', i) as string;
-						const tags = this.getNodeParameter('tags', i) as string[];
-						const paging = this.getNodeParameter('paging', i) as IDataObject;
-						const sort = this.getNodeParameter('sort', i) as IDataObject;
-						result = await blockletServiceApiRequest.call(this, 'getUsers', { dids, query: { includePassports, includeConnectedAccounts, includeTags, role, search, tags }, paging, sort });
-					}
-					if (operation === 'updateUserApproval') {
-						const did = this.getNodeParameter('did', i) as string;
-						const approved = this.getNodeParameter('approved', i) as boolean;
-						result = await blockletServiceApiRequest.call(this, 'updateUserApproval', { did, approved });
-					}
-
-					// FIXME:
-					if (operation === 'login') {
-						const did = this.getNodeParameter('did', i) as string;
-						result = await blockletServiceApiRequest.call(this, 'login', { did });
-					}
-					// FIXME:
-					if (operation === 'updateUserTag') {
-						const did = this.getNodeParameter('did', i) as string;
-						const tags = this.getNodeParameter('tags', i) as string[];
-						result = await blockletServiceApiRequest.call(this, 'updateUserTag', { did, tags });
+					switch (operation) {
+						case 'getOwner':
+							result = await blockletServiceApiRequest.call(this, 'getOwner', {});
+							break;
+						case 'getUser': {
+							const did = this.getNodeParameter('did', i) as string;
+							const enabledConnectedAccount = this.getNodeParameter('enabledConnectedAccount', i) as boolean;
+							const includeTags = this.getNodeParameter('includeTags', i) as boolean;
+							result = await blockletServiceApiRequest.call(this, 'getUser', { did, enabledConnectedAccount, includeTags });
+							break;
+						}
+						case 'getUsers': {
+							const dids = this.getNodeParameter('dids', i) as string[];
+							const includeTags = this.getNodeParameter('includeTags', i) as boolean;
+							const includePassports = this.getNodeParameter('includePassports', i) as boolean;
+							const includeConnectedAccounts = this.getNodeParameter('includeConnectedAccounts', i) as boolean;
+							const role = this.getNodeParameter('role', i) as string;
+							const search = this.getNodeParameter('search', i) as string;
+							const tags = this.getNodeParameter('tags', i) as string[];
+							const paging = this.getNodeParameter('paging', i) as IDataObject;
+							const sort = this.getNodeParameter('sort', i) as IDataObject;
+							result = await blockletServiceApiRequest.call(this, 'getUsers', {
+								dids,
+								query: { includePassports, includeConnectedAccounts, includeTags, role, search, tags },
+								paging,
+								sort
+							});
+							break;
+						}
+						case 'updateUserApproval': {
+							const did = this.getNodeParameter('did', i) as string;
+							const approved = this.getNodeParameter('approved', i) as boolean;
+							result = await blockletServiceApiRequest.call(this, 'updateUserApproval', { did, approved });
+							break;
+						}
+						// FIXME:
+						case 'login': {
+							const did = this.getNodeParameter('did', i) as string;
+							result = await blockletServiceApiRequest.call(this, 'login', { did });
+							break;
+						}
+						// FIXME:
+						case 'updateUserTag': {
+							const did = this.getNodeParameter('did', i) as string;
+							const tags = this.getNodeParameter('tags', i) as string[];
+							result = await blockletServiceApiRequest.call(this, 'updateUserTag', { did, tags });
+							break;
+						}
+						default:
+							throw new ApplicationError(`Not implemented user action: ${operation}`);
 					}
 				}
 
 				if (resource === 'tag') {
-					if (operation === 'create') {
-						const title = this.getNodeParameter('title', i) as string;
-						const description = this.getNodeParameter('description', i) as string;
-						const color = this.getNodeParameter('color', i) as string;
-						result = await blockletServiceApiRequest.call(this, 'createTag', { tag: { title, description, color } });
-					}
-					if (operation === 'update') {
-						const id = this.getNodeParameter('id', i) as string;
-						const title = this.getNodeParameter('title', i) as string;
-						const description = this.getNodeParameter('description', i) as string;
-						const color = this.getNodeParameter('color', i) as string;
-						result = await blockletServiceApiRequest.call(this, 'updateTag', { tag: { id, title, description, color } });
-					}
-					if (operation === 'delete') {
-						const id = this.getNodeParameter('id', i) as string;
-						result = await blockletServiceApiRequest.call(this, 'deleteTag', { tag: { id } });
-					}
-					if (operation === 'getTags') {
-						const paging = this.getNodeParameter('paging', i) as IDataObject;
-						result = await blockletServiceApiRequest.call(this, 'getTags', { paging });
+					switch (operation) {
+						case 'createTag': {
+							const title = this.getNodeParameter('title', i) as string;
+							const description = this.getNodeParameter('description', i) as string;
+							const color = this.getNodeParameter('color', i) as string;
+							result = await blockletServiceApiRequest.call(this, 'createTag', { tag: { title, description, color } });
+							break;
+						}
+						case 'updateTag': {
+							const id = this.getNodeParameter('id', i) as string;
+							const title = this.getNodeParameter('title', i) as string;
+							const description = this.getNodeParameter('description', i) as string;
+							const color = this.getNodeParameter('color', i) as string;
+							result = await blockletServiceApiRequest.call(this, 'updateTag', { tag: { id, title, description, color } });
+							break;
+						}
+						case 'deleteTag': {
+							const id = this.getNodeParameter('id', i) as string;
+							result = await blockletServiceApiRequest.call(this, 'deleteTag', { tag: { id } });
+							break;
+						}
+						case 'getTags': {
+							const paging = this.getNodeParameter('paging', i) as IDataObject;
+							result = await blockletServiceApiRequest.call(this, 'getTags', { paging });
+							break;
+						}
+						default:
+							throw new ApplicationError(`Not implemented tag action: ${operation}`);
 					}
 				}
 
 				if (resource === 'blocklet') {
-					if (operation === 'getBlocklet') {
-						result = await blockletServiceApiRequest.call(this, 'getBlocklet', { });
+					switch (operation) {
+						case 'getBlocklet': {
+							result = await blockletServiceApiRequest.call(this, 'getBlocklet', { });
+							break;
+						}
+						default:
+							throw new ApplicationError(`Not implemented blocklet action: ${operation}`);
 					}
 				}
 
