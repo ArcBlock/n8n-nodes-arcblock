@@ -6,36 +6,34 @@ import {
 	INodeTypeDescription,
 	NodeConnectionType,
 	ApplicationError,
-	ILoadOptionsFunctions,
-	INodePropertyOptions,
 } from 'n8n-workflow';
 
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
 
-import { blockletServiceApiRequest } from './GenericFunctions';
+import { blockletServerApiRequest } from './GenericFunctions';
 import { tagFields, tagOperations } from './TagDescription';
 import { userFields, userOperations } from './UserDescription';
 import { blockletFields, blockletOperations } from './BlockletDescription';
 
-export class BlockletService implements INodeType {
+export class BlockletServer implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'Blocklet Service',
-		name: 'blockletService',
-		icon: 'file:blocklet-service.svg',
+		displayName: 'Blocklet Server',
+		name: 'blockletServer',
+		icon: 'file:blocklet-server.svg',
 		group: ['input'],
 		version: 1,
 		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Consume Blocklet Service API',
+		description: 'Consume Blocklet Server API',
 		defaults: {
-			name: 'Blocklet Service',
+			name: 'Blocklet Server',
 		},
 		usableAsTool: true,
 		inputs: [NodeConnectionType.Main],
 		outputs: [NodeConnectionType.Main],
 		credentials: [
 			{
-				name: 'blockletServiceApi',
+				name: 'blockletServerApi',
 				required: true,
 			},
 		],
@@ -63,7 +61,7 @@ export class BlockletService implements INodeType {
 						value: 'user',
 					},
 				],
-				default: 'user',
+				default: 'blocklet',
 			},
 			...tagOperations,
 			...tagFields,
@@ -72,24 +70,6 @@ export class BlockletService implements INodeType {
 			...blockletOperations,
 			...blockletFields,
 		],
-	};
-
-	methods = {
-		loadOptions: {
-			async getTags(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
-				const result: INodePropertyOptions[] = [];
-				const { tags } = await blockletServiceApiRequest.call(this, 'getTags', {
-					paging: { pageSize: 100 },
-				});
-				for (const tag of tags) {
-					result.push({
-						name: tag.title,
-						value: tag.id,
-					});
-				}
-				return result;
-			},
-		},
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -104,16 +84,19 @@ export class BlockletService implements INodeType {
 				if (resource === 'user') {
 					switch (operation) {
 						case 'getOwner':
-							result = await blockletServiceApiRequest.call(this, 'getOwner', {});
+							const teamDid = this.getNodeParameter('teamDid', i) as string;
+							result = await blockletServerApiRequest.call(this, 'getOwner', { teamDid });
 							break;
 						case 'getUser': {
+							const teamDid = this.getNodeParameter('teamDid', i) as string;
 							const did = this.getNodeParameter('did', i) as string;
 							const enabledConnectedAccount = this.getNodeParameter(
 								'enabledConnectedAccount',
 								i,
 							) as boolean;
 							const includeTags = this.getNodeParameter('includeTags', i) as boolean;
-							result = await blockletServiceApiRequest.call(this, 'getUser', {
+							result = await blockletServerApiRequest.call(this, 'getUser', {
+								teamDid,
 								user: { did },
 								options: {
 									enabledConnectedAccount,
@@ -123,6 +106,7 @@ export class BlockletService implements INodeType {
 							break;
 						}
 						case 'getUsers': {
+							const teamDid = this.getNodeParameter('teamDid', i) as string;
 							const dids = this.getNodeParameter('dids', i) as string[];
 							const includeTags = this.getNodeParameter('includeTags', i) as boolean;
 							const includePassports = this.getNodeParameter('includePassports', i) as boolean;
@@ -162,22 +146,28 @@ export class BlockletService implements INodeType {
 								query.tags = tags;
 							}
 
-							result = await blockletServiceApiRequest.call(
+							result = await blockletServerApiRequest.call(
 								this,
 								'getUsers',
-								omitBy({ dids, query, paging, sort }, isEmpty),
+								omitBy({ teamDid, dids, query, paging, sort }, isEmpty),
 							);
 							break;
 						}
 						case 'removeUser': {
+							const teamDid = this.getNodeParameter('teamDid', i) as string;
 							const did = this.getNodeParameter('did', i) as string;
-							result = await blockletServiceApiRequest.call(this, 'removeUser', { user: { did } });
+							result = await blockletServerApiRequest.call(this, 'removeUser', {
+								teamDid,
+								user: { did },
+							});
 							break;
 						}
 						case 'updateUserApproval': {
+							const teamDid = this.getNodeParameter('teamDid', i) as string;
 							const did = this.getNodeParameter('did', i) as string;
 							const approved = this.getNodeParameter('approved', i) as boolean;
-							result = await blockletServiceApiRequest.call(this, 'updateUserApproval', {
+							result = await blockletServerApiRequest.call(this, 'updateUserApproval', {
+								teamDid,
 								user: {
 									did,
 									approved,
@@ -185,16 +175,15 @@ export class BlockletService implements INodeType {
 							});
 							break;
 						}
-						// FIXME:
-						case 'login': {
-							const did = this.getNodeParameter('did', i) as string;
-							result = await blockletServiceApiRequest.call(this, 'login', { did });
-							break;
-						}
 						case 'updateUserTags': {
+							const teamDid = this.getNodeParameter('teamDid', i) as string;
 							const did = this.getNodeParameter('did', i) as string;
 							const tags = this.getNodeParameter('tags', i) as string[];
-							result = await blockletServiceApiRequest.call(this, 'updateUserTags', { did, tags });
+							result = await blockletServerApiRequest.call(this, 'updateUserTags', {
+								teamDid,
+								user: { did },
+								tags,
+							});
 							break;
 						}
 						default:
@@ -205,32 +194,44 @@ export class BlockletService implements INodeType {
 				if (resource === 'tag') {
 					switch (operation) {
 						case 'createTag': {
+							const teamDid = this.getNodeParameter('teamDid', i) as string;
 							const title = this.getNodeParameter('title', i) as string;
 							const description = this.getNodeParameter('description', i) as string;
 							const color = this.getNodeParameter('color', i) as string;
-							result = await blockletServiceApiRequest.call(this, 'createTag', {
+							result = await blockletServerApiRequest.call(this, 'createTag', {
+								teamDid,
 								tag: { title, description, color },
 							});
 							break;
 						}
 						case 'updateTag': {
+							const teamDid = this.getNodeParameter('teamDid', i) as string;
 							const id = this.getNodeParameter('id', i) as string;
 							const title = this.getNodeParameter('title', i) as string;
 							const description = this.getNodeParameter('description', i) as string;
 							const color = this.getNodeParameter('color', i) as string;
-							result = await blockletServiceApiRequest.call(this, 'updateTag', {
+							result = await blockletServerApiRequest.call(this, 'updateTag', {
+								teamDid,
 								tag: { id, title, description, color },
 							});
 							break;
 						}
 						case 'deleteTag': {
+							const teamDid = this.getNodeParameter('teamDid', i) as string;
 							const id = this.getNodeParameter('id', i) as string;
-							result = await blockletServiceApiRequest.call(this, 'deleteTag', { tag: { id } });
+							result = await blockletServerApiRequest.call(this, 'deleteTag', {
+								teamDid,
+								tag: { id },
+							});
 							break;
 						}
 						case 'getTags': {
+							const teamDid = this.getNodeParameter('teamDid', i) as string;
 							const paging = this.getNodeParameter('paging', i) as IDataObject;
-							result = await blockletServiceApiRequest.call(this, 'getTags', { paging });
+							result = await blockletServerApiRequest.call(this, 'getTags', {
+								teamDid,
+								paging,
+							});
 							break;
 						}
 						default:
@@ -241,7 +242,16 @@ export class BlockletService implements INodeType {
 				if (resource === 'blocklet') {
 					switch (operation) {
 						case 'getBlocklet': {
-							result = await blockletServiceApiRequest.call(this, 'getBlocklet', {});
+							const did = this.getNodeParameter('did', i) as string;
+							result = await blockletServerApiRequest.call(this, 'getBlocklet', {
+								did,
+							});
+							break;
+						}
+						case 'getBlocklets': {
+							result = await blockletServerApiRequest.call(this, 'getBlocklets', {
+								includeRuntimeInfo: false,
+							});
 							break;
 						}
 						default:

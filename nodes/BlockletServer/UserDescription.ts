@@ -33,12 +33,6 @@ export const userOperations: INodeProperties[] = [
 				action: 'Get many users',
 			},
 			{
-				name: 'Login',
-				value: 'login',
-				description: 'Login a user',
-				action: 'Login a user',
-			},
-			{
 				name: 'Remove User',
 				value: 'removeUser',
 				description: 'Remove a user and all the data associated with it',
@@ -62,6 +56,20 @@ export const userOperations: INodeProperties[] = [
 ];
 
 export const userFields: INodeProperties[] = [
+	{
+		displayName: 'App DID',
+		name: 'teamDid',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['user'],
+				operation: ['getUser', 'getUsers', 'updateUserApproval', 'updateUserTags', 'removeUser'],
+			},
+		},
+		default: '',
+		description: 'DID of the blocklet app (team)',
+	},
 	{
 		displayName: 'User DID',
 		name: 'did',
@@ -132,12 +140,11 @@ export const userFields: INodeProperties[] = [
 		description: 'Filter users by DIDs',
 	},
 	{
-		displayName: 'Tag Names or IDs',
+		displayName: 'Tags',
 		name: 'tags',
-		type: 'multiOptions',
+		type: 'string',
 		typeOptions: {
 			multipleValues: true,
-			loadOptionsMethod: 'getTags',
 		},
 		displayOptions: {
 			show: {
@@ -146,7 +153,7 @@ export const userFields: INodeProperties[] = [
 			},
 		},
 		default: [],
-		description: 'Filter users by tags. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+		description: 'Filter users by tags',
 	},
 	{
 		displayName: 'Include Tags',
