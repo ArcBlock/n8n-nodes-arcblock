@@ -8,7 +8,6 @@ import { NodeApiError } from 'n8n-workflow';
 
 import Client from '@abtnode/client';
 
-
 export async function blockletServiceApiRequest(
 	this: IExecuteFunctions | ILoadOptionsFunctions,
 	method: string,
@@ -21,7 +20,7 @@ export async function blockletServiceApiRequest(
 	if (typeof client[method] !== 'function') {
 		throw new Error(`Method ${method} not found`);
 	}
-	if (typeof client[method].build !== 'function') {
+	if (typeof client[method].builder !== 'function') {
 		throw new Error(`Method ${method} is not a valid graphql wrapper`);
 	}
 
@@ -40,14 +39,19 @@ export async function blockletServiceApiRequest(
 	const options: IRequestOptions = {
 		method: 'POST',
 		body: {
-			query: client[method].build({ input: args }),
+			query: client[method].builder({ input: args }),
 		},
 		url: '/.well-known/service/api/gql',
 		json: true,
 	};
 
 	try {
-		return await this.helpers.requestWithAuthentication.call(this, 'blockletServiceApi', options);
+		const result = await this.helpers.requestWithAuthentication.call(
+			this,
+			'blockletServiceApi',
+			options,
+		);
+		return result.data[method];
 	} catch (error) {
 		throw new NodeApiError(this.getNode(), error as JsonObject);
 	}

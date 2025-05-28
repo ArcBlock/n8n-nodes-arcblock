@@ -12,8 +12,6 @@ export class BlockletComponentApi implements ICredentialType {
 
 	displayName = 'Blocklet Component API';
 
-	iconUrl = 'https://avatars.githubusercontent.com/u/34142321?s=48&v=4';
-
 	documentationUrl = 'https://www.arcblock.io/docs/blocklet-developer/en/access-key';
 
 	properties: INodeProperties[] = [

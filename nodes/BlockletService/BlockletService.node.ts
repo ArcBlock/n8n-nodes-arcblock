@@ -10,6 +10,7 @@ import {
 import { blockletServiceApiRequest } from './GenericFunctions';
 import { tagFields, tagOperations } from './TagDescription';
 import { userFields, userOperations } from './UserDescription';
+import { blockletFields, blockletOperations } from './BlockletDescription';
 
 export class BlockletService implements INodeType {
 	description: INodeTypeDescription = {
@@ -62,6 +63,8 @@ export class BlockletService implements INodeType {
 			...tagFields,
 			...userOperations,
 			...userFields,
+			...blockletOperations,
+			...blockletFields,
 		],
 	};
 
@@ -94,7 +97,6 @@ export class BlockletService implements INodeType {
 						const tags = this.getNodeParameter('tags', i) as string[];
 						const paging = this.getNodeParameter('paging', i) as IDataObject;
 						const sort = this.getNodeParameter('sort', i) as IDataObject;
-
 						result = await blockletServiceApiRequest.call(this, 'getUsers', { dids, query: { includePassports, includeConnectedAccounts, includeTags, role, search, tags }, paging, sort });
 					}
 					if (operation === 'updateUserApproval') {
@@ -118,6 +120,31 @@ export class BlockletService implements INodeType {
 
 				if (resource === 'tag') {
 					if (operation === 'create') {
+						const title = this.getNodeParameter('title', i) as string;
+						const description = this.getNodeParameter('description', i) as string;
+						const color = this.getNodeParameter('color', i) as string;
+						result = await blockletServiceApiRequest.call(this, 'createTag', { tag: { title, description, color } });
+					}
+					if (operation === 'update') {
+						const id = this.getNodeParameter('id', i) as string;
+						const title = this.getNodeParameter('title', i) as string;
+						const description = this.getNodeParameter('description', i) as string;
+						const color = this.getNodeParameter('color', i) as string;
+						result = await blockletServiceApiRequest.call(this, 'updateTag', { tag: { id, title, description, color } });
+					}
+					if (operation === 'delete') {
+						const id = this.getNodeParameter('id', i) as string;
+						result = await blockletServiceApiRequest.call(this, 'deleteTag', { tag: { id } });
+					}
+					if (operation === 'getTags') {
+						const paging = this.getNodeParameter('paging', i) as IDataObject;
+						result = await blockletServiceApiRequest.call(this, 'getTags', { paging });
+					}
+				}
+
+				if (resource === 'blocklet') {
+					if (operation === 'getBlocklet') {
+						result = await blockletServiceApiRequest.call(this, 'getBlocklet', { });
 					}
 				}
 

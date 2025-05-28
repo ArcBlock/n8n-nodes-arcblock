@@ -97,35 +97,33 @@ export const tagFields: INodeProperties[] = [
 		default: '',
 		description: 'Description of the tag',
 	},
-
 	{
-		displayName: 'Return All',
-		name: 'returnAll',
-		type: 'boolean',
+		displayName: 'Paging',
+		name: 'paging',
+		type: 'collection',
+		placeholder: 'Add Paging',
+		default: {},
 		displayOptions: {
 			show: {
 				resource: ['tag'],
 				operation: ['getTags'],
 			},
 		},
-		default: false,
-		description: 'Whether to return all results or only up to a given limit',
-	},
-	{
-		displayName: 'Limit',
-		name: 'limit',
-		type: 'number',
-		displayOptions: {
-			show: {
-				resource: ['tag'],
-				operation: ['getTags'],
-				returnAll: [false],
+		options: [
+			{
+				displayName: 'Page',
+				name: 'page',
+				type: 'number',
+				default: 1,
+				description: 'The page number to fetch',
 			},
-		},
-		typeOptions: {
-			minValue: 1,
-		},
-		default: 50,
-		description: 'Max number of results to return',
+			{
+				displayName: 'Page Size',
+				name: 'pageSize',
+				type: 'number',
+				default: 20,
+				description: 'The number of items per page',
+			},
+		],
 	},
 ];
