@@ -46,25 +46,25 @@ export const userOperations: INodeProperties[] = [
 			},
 			{
 				name: 'Update User Tags',
-				value: 'updateUserTag',
+				value: 'updateUserTags',
 				description: 'Update the tags of a user',
 				action: 'Update the tags of a user',
 			},
 		],
-		default: 'getUser',
+		default: 'getUsers',
 	},
 ];
 
 export const userFields: INodeProperties[] = [
 	{
-		displayName: 'DID',
+		displayName: 'User DID',
 		name: 'did',
 		type: 'string',
 		required: true,
 		displayOptions: {
 			show: {
 				resource: ['user'],
-				operation: ['getUser', 'updateUserApproval'],
+				operation: ['getUser', 'updateUserApproval', 'updateUserTags'],
 			},
 		},
 		default: '',
@@ -84,7 +84,7 @@ export const userFields: INodeProperties[] = [
 		description: 'Whether to search the connected account of the user',
 	},
 	{
-		displayName: 'Role',
+		displayName: 'User Role',
 		name: 'role',
 		type: 'string',
 		displayOptions: {
@@ -97,7 +97,7 @@ export const userFields: INodeProperties[] = [
 		description: 'Filter users by role',
 	},
 	{
-		displayName: 'Search Keyword',
+		displayName: 'Search Keyword (by Name, Email, Did)',
 		name: 'search',
 		type: 'string',
 		displayOptions: {
@@ -110,7 +110,7 @@ export const userFields: INodeProperties[] = [
 		description: 'Filter users by search keyword',
 	},
 	{
-		displayName: 'DIDs',
+		displayName: 'User DIDs',
 		name: 'dids',
 		type: 'string',
 		typeOptions: {
@@ -126,20 +126,21 @@ export const userFields: INodeProperties[] = [
 		description: 'Filter users by DIDs',
 	},
 	{
-		displayName: 'Tags',
+		displayName: 'Tag Names or IDs',
 		name: 'tags',
-		type: 'string',
+		type: 'multiOptions',
 		typeOptions: {
 			multipleValues: true,
+			loadOptionsMethod: 'getTags',
 		},
 		displayOptions: {
 			show: {
 				resource: ['user'],
-				operation: ['getUsers'],
+				operation: ['getUsers', 'updateUserTags'],
 			},
 		},
 		default: [],
-		description: 'Filter users by tags',
+		description: 'Filter users by tags. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
 	},
 	{
 		displayName: 'Include Tags',

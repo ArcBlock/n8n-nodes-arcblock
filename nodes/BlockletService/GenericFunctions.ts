@@ -34,8 +34,12 @@ export async function blockletServiceApiRequest(
 	});
 	const json = await response.json();
 
-	args.did = json.appPid;
-	args.teamDid = json.appPid;
+	if (!args.did) {
+		args.did = json.appPid;
+	}
+	if (!args.teamDid) {
+		args.teamDid = json.appPid;
+	}
 
 	const options: IRequestOptions = {
 		method: 'POST',

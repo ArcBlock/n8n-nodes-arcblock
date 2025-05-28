@@ -6,6 +6,8 @@ import {
 	INodeTypeDescription,
 	NodeConnectionType,
 	ApplicationError,
+	ILoadOptionsFunctions,
+	INodePropertyOptions,
 } from 'n8n-workflow';
 
 import omitBy from 'lodash/omitBy';
@@ -70,6 +72,24 @@ export class BlockletService implements INodeType {
 			...blockletOperations,
 			...blockletFields,
 		],
+	};
+
+	methods = {
+		loadOptions: {
+			async getTags(this: ILoadOptionsFunctions): Promise<INodePropertyOptions[]> {
+				const result: INodePropertyOptions[] = [];
+				const { tags } = await blockletServiceApiRequest.call(this, 'getTags', {
+					paging: { pageSize: 100 },
+				});
+				for (const tag of tags) {
+					result.push({
+						name: tag.title,
+						value: tag.id,
+					});
+				}
+				return result;
+			},
+		},
 	};
 
 	async execute(this: IExecuteFunctions): Promise<INodeExecutionData[][]> {
@@ -162,11 +182,10 @@ export class BlockletService implements INodeType {
 							result = await blockletServiceApiRequest.call(this, 'login', { did });
 							break;
 						}
-						// FIXME:
-						case 'updateUserTag': {
+						case 'updateUserTags': {
 							const did = this.getNodeParameter('did', i) as string;
 							const tags = this.getNodeParameter('tags', i) as string[];
-							result = await blockletServiceApiRequest.call(this, 'updateUserTag', { did, tags });
+							result = await blockletServiceApiRequest.call(this, 'updateUserTags', { did, tags });
 							break;
 						}
 						default:
