@@ -34,12 +34,16 @@
   "n8n": {
     "n8nNodesApiVersion": 1,
     "credentials": [
-      "dist/credentials/ExampleCredentialsApi.credentials.js",
-      "dist/credentials/HttpBinApi.credentials.js"
+      "dist/credentials/BlockletComponentApi.credentials.js",
+      "dist/credentials/BlockletServerApi.credentials.js",
+      "dist/credentials/BlockletServiceApi.credentials.js"
     ],
     "nodes": [
-      "dist/nodes/ExampleNode/ExampleNode.node.js",
-      "dist/nodes/HttpBin/HttpBin.node.js"
+      "dist/nodes/BlockletServer/BlockletServer.node.js",
+      "dist/nodes/BlockletService/BlockletService.node.js",
+      "dist/nodes/DiscussKit/DiscussKit.node.js",
+      "dist/nodes/MarkdownToLexical/MarkdownToLexical.node.js",
+      "dist/nodes/SnapKit/SnapKit.node.js"
     ]
   },
   "devDependencies": {
