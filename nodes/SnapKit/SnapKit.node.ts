@@ -57,7 +57,7 @@ export class SnapKit implements INodeType {
 				description: 'The URL to capture (must be a valid URI)',
 				displayOptions: {
 					show: {
-						snapApi: ['takeSnapshot'],
+						snapApi: ['takeSnapshot', 'crawlContent'],
 					},
 				},
 			},
