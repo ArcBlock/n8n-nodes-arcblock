@@ -88,7 +88,7 @@ export class BlockletComponentApi implements ICredentialType {
 	test: ICredentialTestRequest = {
 		request: {
 			baseURL: '={{$credentials.url}}',
-			url: '/api/chat/chats',
+			url: '/.well-known/service/api/did/session',
 			method: 'GET',
 		},
 	};

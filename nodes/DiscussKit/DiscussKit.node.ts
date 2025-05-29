@@ -9,7 +9,7 @@ import {
 import { v4 as uuidv4 } from 'uuid';
 
 import { labelFields, labelOperations } from './LabelDescription';
-import { discussKitApiRequest } from './GenericFunctions';
+import { blockletComponentApiRequest } from '../BlockletComponent/GenericFunctions';
 import { boardFields, boardOperations } from './BoardDescription';
 import { contentFields, contentOperations } from './ContentDescription';
 import { searchFields, searchOperations } from './SearchDescription';
@@ -106,11 +106,11 @@ export class DiscussKit implements INodeType {
 							text_color: textColor,
 						};
 
-						result = await discussKitApiRequest.call(this, 'POST', '/api/boards', body);
+						result = await blockletComponentApiRequest.call(this, 'POST', '/api/boards', body);
 					}
 					if (operation === 'getAll') {
 						const returnAll = this.getNodeParameter('returnAll', i);
-						result = await discussKitApiRequest.call(this, 'GET', '/api/boards', {}, qs);
+						result = await blockletComponentApiRequest.call(this, 'GET', '/api/boards', {}, qs);
 						result = result.boards;
 						if (!returnAll) {
 							const limit = this.getNodeParameter('limit', i);
@@ -126,13 +126,13 @@ export class DiscussKit implements INodeType {
 							name,
 						};
 
-						result = await discussKitApiRequest.call(this, 'POST', '/api/labels', {
+						result = await blockletComponentApiRequest.call(this, 'POST', '/api/labels', {
 							group: body,
 						});
 					}
 					if (operation === 'getAll') {
 						const returnAll = this.getNodeParameter('returnAll', i);
-						result = await discussKitApiRequest.call(this, 'GET', '/api/labels', {}, qs);
+						result = await blockletComponentApiRequest.call(this, 'GET', '/api/labels', {}, qs);
 						result = result.labels;
 
 						if (!returnAll) {
@@ -196,8 +196,8 @@ export class DiscussKit implements INodeType {
 						}
 
 						if (resource === 'discussion') {
-							result = await discussKitApiRequest.call(this, 'POST', '/api/posts/drafts', body);
-							result = await discussKitApiRequest.call(
+							result = await blockletComponentApiRequest.call(this, 'POST', '/api/posts/drafts', body);
+							result = await blockletComponentApiRequest.call(
 								this,
 								'POST',
 								`/api/posts/${result.id}/publish`,
@@ -205,22 +205,22 @@ export class DiscussKit implements INodeType {
 							);
 						}
 						if (resource === 'blog') {
-							result = await discussKitApiRequest.call(this, 'POST', '/api/blogs', body);
-							result = await discussKitApiRequest.call(
+							result = await blockletComponentApiRequest.call(this, 'POST', '/api/blogs', body);
+							result = await blockletComponentApiRequest.call(
 								this,
 								'POST',
 								`/api/blogs/${result.id}/publish`,
 								body,
 							);
-							result = await discussKitApiRequest.call(
+							result = await blockletComponentApiRequest.call(
 								this,
 								'GET',
 								`/api/blogs/${result.id}?locale=${locale}`,
 							);
 						}
 						if (resource === 'doc') {
-							result = await discussKitApiRequest.call(this, 'POST', '/api/docs', body);
-							result = await discussKitApiRequest.call(this, 'PUT', `/api/docs/${result.id}`, {
+							result = await blockletComponentApiRequest.call(this, 'POST', '/api/docs', body);
+							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/docs/${result.id}`, {
 								...result,
 								...body,
 							});
@@ -228,7 +228,7 @@ export class DiscussKit implements INodeType {
 						if (resource === 'bookmark') {
 							const url = this.getNodeParameter('url', i) as string;
 							const id = uuidv4();
-							const og = await discussKitApiRequest.call(
+							const og = await blockletComponentApiRequest.call(
 								this,
 								'GET',
 								'/api/embed/og',
@@ -252,8 +252,8 @@ export class DiscussKit implements INodeType {
 								},
 							};
 
-							result = await discussKitApiRequest.call(this, 'POST', '/api/comments', payload);
-							result = await discussKitApiRequest.call(this, 'GET', `/api/bookmarks/${id}`, {});
+							result = await blockletComponentApiRequest.call(this, 'POST', '/api/comments', payload);
+							result = await blockletComponentApiRequest.call(this, 'GET', `/api/bookmarks/${id}`, {});
 						}
 					}
 
@@ -282,13 +282,13 @@ export class DiscussKit implements INodeType {
 							body.assignees = assignees.split(',');
 						}
 						if (resource === 'discussion') {
-							result = await discussKitApiRequest.call(this, 'PUT', `/api/posts/${id}`, body);
+							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/posts/${id}`, body);
 						}
 						if (resource === 'blog') {
-							result = await discussKitApiRequest.call(this, 'PUT', `/api/blogs/${id}`, body);
+							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/blogs/${id}`, body);
 						}
 						if (resource === 'doc') {
-							result = await discussKitApiRequest.call(this, 'PUT', `/api/docs/${id}`, body);
+							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/docs/${id}`, body);
 						}
 						if (resource === 'bookmark') {
 							// FIXME:
@@ -298,31 +298,31 @@ export class DiscussKit implements INodeType {
 					if (operation === 'addLabel') {
 						const id = this.getNodeParameter('id', i) as string;
 						const label = this.getNodeParameter('label', i) as string;
-						await discussKitApiRequest.call(this, 'POST', `/api/posts/${id}/labels`, { label });
+						await blockletComponentApiRequest.call(this, 'POST', `/api/posts/${id}/labels`, { label });
 					}
 
 					if (operation === 'removeLabel') {
 						const id = this.getNodeParameter('id', i) as string;
 						const label = this.getNodeParameter('label', i) as string;
-						await discussKitApiRequest.call(this, 'DELETE', `/api/posts/${id}/labels/${label}`);
+						await blockletComponentApiRequest.call(this, 'DELETE', `/api/posts/${id}/labels/${label}`);
 					}
 
 					if (operation === 'addAssignee') {
 						const id = this.getNodeParameter('id', i) as string;
 						const assignee = this.getNodeParameter('assignee', i) as string;
-						await discussKitApiRequest.call(this, 'POST', `/api/posts/${id}/assignees`, { assignee });
+						await blockletComponentApiRequest.call(this, 'POST', `/api/posts/${id}/assignees`, { assignee });
 					}
 
 					if (operation === 'removeAssignee') {
 						const id = this.getNodeParameter('id', i) as string;
 						const assignee = this.getNodeParameter('assignee', i) as string;
-						await discussKitApiRequest.call(this, 'DELETE', `/api/posts/${id}/assignees/${assignee}`);
+						await blockletComponentApiRequest.call(this, 'DELETE', `/api/posts/${id}/assignees/${assignee}`);
 					}
 
 					if (operation === 'publish') {
 						const id = this.getNodeParameter('id', i) as string;
 						if (resource === 'discussion') {
-							result = await discussKitApiRequest.call(
+							result = await blockletComponentApiRequest.call(
 								this,
 								'POST',
 								`/api/posts/${id}/publish`,
@@ -330,7 +330,7 @@ export class DiscussKit implements INodeType {
 							);
 						}
 						if (resource === 'blog') {
-							result = await discussKitApiRequest.call(
+							result = await blockletComponentApiRequest.call(
 								this,
 								'POST',
 								`/api/blogs/${id}/publish`,
@@ -341,12 +341,12 @@ export class DiscussKit implements INodeType {
 
 					if (operation === 'delete') {
 						const id = this.getNodeParameter('id', i) as string;
-						result = await discussKitApiRequest.call(this, 'DELETE', `/api/${resource}s/${id}`, {});
+						result = await blockletComponentApiRequest.call(this, 'DELETE', `/api/${resource}s/${id}`, {});
 					}
 
 					if (operation === 'get') {
 						const id = this.getNodeParameter('id', i) as string;
-						result = await discussKitApiRequest.call(
+						result = await blockletComponentApiRequest.call(
 							this,
 							'GET',
 							`/api/${resource}s/${id}`,
@@ -363,7 +363,7 @@ export class DiscussKit implements INodeType {
 							qs.boardId = boardId;
 						}
 
-						result = await discussKitApiRequest.call(this, 'GET', `/api/${resource}s`, {}, qs);
+						result = await blockletComponentApiRequest.call(this, 'GET', `/api/${resource}s`, {}, qs);
 						result = Array.isArray(result) ? result : result.data;
 
 						let lastPost = result.pop();
@@ -373,7 +373,7 @@ export class DiscussKit implements INodeType {
 								if (limit && result.length > limit) {
 									break;
 								}
-								const chunk = await discussKitApiRequest.call(
+								const chunk = await blockletComponentApiRequest.call(
 									this,
 									'GET',
 									`/api/${resource}s`,
@@ -405,7 +405,7 @@ export class DiscussKit implements INodeType {
 						qs.offset = this.getNodeParameter('offset', i) as number;
 						qs.limit = this.getNodeParameter('limit', i) as number;
 
-						result = await discussKitApiRequest.call(this, 'GET', '/api/search', {}, qs);
+						result = await blockletComponentApiRequest.call(this, 'GET', '/api/search', {}, qs);
 					}
 				}
 
