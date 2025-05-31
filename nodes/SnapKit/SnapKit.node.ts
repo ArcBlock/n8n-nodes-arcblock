@@ -11,13 +11,13 @@ import { blockletComponentApiRequest } from '../BlockletComponent/GenericFunctio
 
 export class SnapKit implements INodeType {
 	description: INodeTypeDescription = {
-		displayName: 'SnapKit',
+		displayName: 'Snap Kit',
 		name: 'snapKit',
 		icon: 'file:snap-kit.svg',
 		group: ['input'],
 		version: 1,
-		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
-		description: 'Consume SnapKit API',
+		subtitle: '={{$parameter["operation"]}}',
+		description: 'Consume Snap Kit API',
 		defaults: {
 			name: 'Snap Kit',
 		},
@@ -32,8 +32,8 @@ export class SnapKit implements INodeType {
 		],
 		properties: [
 			{
-				displayName: 'Snap API',
-				name: 'snapApi',
+				displayName: 'Operation',
+				name: 'operation',
 				type: 'options',
 				noDataExpression: true,
 				options: [
@@ -57,7 +57,7 @@ export class SnapKit implements INodeType {
 				description: 'The URL to capture (must be a valid URI)',
 				displayOptions: {
 					show: {
-						snapApi: ['takeSnapshot', 'crawlContent'],
+						operation: ['takeSnapshot', 'crawlContent'],
 					},
 				},
 			},
@@ -72,7 +72,7 @@ export class SnapKit implements INodeType {
 				},
 				displayOptions: {
 					show: {
-						snapApi: ['takeSnapshot'],
+						operation: ['takeSnapshot'],
 					},
 				},
 			},
@@ -87,7 +87,7 @@ export class SnapKit implements INodeType {
 				},
 				displayOptions: {
 					show: {
-						snapApi: ['takeSnapshot'],
+						operation: ['takeSnapshot'],
 					},
 				},
 			},
@@ -103,7 +103,7 @@ export class SnapKit implements INodeType {
 				},
 				displayOptions: {
 					show: {
-						snapApi: ['takeSnapshot'],
+						operation: ['takeSnapshot'],
 					},
 				},
 			},
@@ -119,7 +119,7 @@ export class SnapKit implements INodeType {
 				},
 				displayOptions: {
 					show: {
-						snapApi: ['takeSnapshot', 'crawlContent'],
+						operation: ['takeSnapshot', 'crawlContent'],
 					},
 				},
 			},
@@ -131,7 +131,7 @@ export class SnapKit implements INodeType {
 				description: 'Whether to capture the full page or just the viewport',
 				displayOptions: {
 					show: {
-						snapApi: ['takeSnapshot'],
+						operation: ['takeSnapshot'],
 					},
 				},
 			},
@@ -143,7 +143,7 @@ export class SnapKit implements INodeType {
 				description: 'Whether to wait for capture completion before responding',
 				displayOptions: {
 					show: {
-						snapApi: ['takeSnapshot', 'crawlContent'],
+						operation: ['takeSnapshot', 'crawlContent'],
 					},
 				},
 			},
@@ -155,10 +155,10 @@ export class SnapKit implements INodeType {
 		const returnData: INodeExecutionData[] = [];
 		const length = items.length;
 		let result;
-		const snapApi = this.getNodeParameter('snapApi', 0);
+		const operation = this.getNodeParameter('operation', 0);
 		for (let i = 0; i < length; i++) {
 			try {
-				if (snapApi === 'takeSnapshot') {
+				if (operation === 'takeSnapshot') {
 					const url = this.getNodeParameter('url', i) as string;
 					const width = this.getNodeParameter('width', i) as number || 1440;
 					const height = this.getNodeParameter('height', i) as number || 900;
@@ -177,7 +177,7 @@ export class SnapKit implements INodeType {
 						timeout,
 					});
 				}
-				if (snapApi === 'crawlContent') {
+				if (operation === 'crawlContent') {
 					const url = this.getNodeParameter('url', i) as string;
 					const timeout = this.getNodeParameter('timeout', i) as number || 120;
 					const sync = this.getNodeParameter('sync', i) as boolean || true;
