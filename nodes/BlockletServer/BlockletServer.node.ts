@@ -23,7 +23,7 @@ export class BlockletServer implements INodeType {
 		icon: 'file:blocklet-server.svg',
 		group: ['input'],
 		version: 1,
-		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+		subtitle: '={{$parameter["operation"]}}',
 		description: 'Consume Blocklet Server API',
 		defaults: {
 			name: 'Blocklet Server',

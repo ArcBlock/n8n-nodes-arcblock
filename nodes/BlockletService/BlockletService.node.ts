@@ -25,7 +25,7 @@ export class BlockletService implements INodeType {
 		icon: 'file:blocklet-service.svg',
 		group: ['input'],
 		version: 1,
-		subtitle: '={{$parameter["operation"] + ": " + $parameter["resource"]}}',
+		subtitle: '={{$parameter["operation"]}}',
 		description: 'Consume Blocklet Service API',
 		defaults: {
 			name: 'Blocklet Service',
