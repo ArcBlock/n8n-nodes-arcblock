@@ -1,3 +1,7 @@
+## 0.1.3 (2025-6-2)
+
+- fix: add missing payment-kit node
+
 ## 0.1.2 (2025-6-1)
 
 - feat: complete paid customer tagging workflow
