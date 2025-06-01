@@ -12,6 +12,7 @@ import {
 
 import omitBy from 'lodash/omitBy';
 import isEmpty from 'lodash/isEmpty';
+import flatMap from 'lodash/flatMap';
 
 import { blockletServiceApiRequest } from './GenericFunctions';
 import { tagFields, tagOperations } from './TagDescription';
@@ -194,7 +195,10 @@ export class BlockletService implements INodeType {
 						case 'updateUserTags': {
 							const did = this.getNodeParameter('did', i) as string;
 							const tags = this.getNodeParameter('tags', i) as string[];
-							result = await blockletServiceApiRequest.call(this, 'updateUserTags', { did, tags });
+							result = await blockletServiceApiRequest.call(this, 'updateUserTags', {
+								did,
+								tags: flatMap(tags.map((x) => (x.includes(',') ? x.split(',') : x))).map(Number),
+							});
 							break;
 						}
 						default:

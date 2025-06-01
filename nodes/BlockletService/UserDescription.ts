@@ -134,7 +134,7 @@ export const userFields: INodeProperties[] = [
 	{
 		displayName: 'Tag Names or IDs',
 		name: 'tags',
-		type: 'multiOptions',
+		type: 'string',
 		typeOptions: {
 			multipleValues: true,
 			loadOptionsMethod: 'getTags',
