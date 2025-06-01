@@ -21,6 +21,7 @@
   },
   "main": "index.js",
   "scripts": {
+    "prebuild": "rm -rf dist",
     "build": "tsc && gulp build:icons",
     "dev": "tsc --watch",
     "format": "prettier nodes credentials --write",
@@ -44,6 +45,7 @@
       "dist/nodes/BlockletService/BlockletService.node.js",
       "dist/nodes/DiscussKit/DiscussKit.node.js",
       "dist/nodes/MarkdownToLexical/MarkdownToLexical.node.js",
+      "dist/nodes/PaymentKit/PaymentKit.node.js",
       "dist/nodes/SnapKit/SnapKit.node.js"
     ]
   },
