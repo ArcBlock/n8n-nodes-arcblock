@@ -74,9 +74,11 @@ export class BlockletComponentApi implements ICredentialType {
 			requestOptions.url = joinURL(component.mountPoint, requestOptions.url);
 		}
 
-		requestOptions.headers = {
-			Authorization: `Bearer ${credentials.accessKey}`,
-		};
+		if (requestOptions.headers) {
+			requestOptions.headers['Authorization'] = `Bearer ${credentials.accessKey}`;
+		} else {
+			requestOptions.headers = { Authorization: `Bearer ${credentials.accessKey}` };
+		}
 
 		if (requestOptions.method === 'GET') {
 			delete requestOptions.body;
