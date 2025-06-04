@@ -33,10 +33,16 @@ export class BlockletComponentApi implements ICredentialType {
 			description: 'The access key to access your blocklet.',
 		},
 		{
-			displayName: 'Component DID',
+			displayName: 'Blocklet Component',
 			name: 'componentDid',
 			required: true,
-			type: 'string',
+			type: 'options',
+			options: [
+				{ name: 'Discuss Kit (z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu)', value: 'z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu' },
+				{ name: 'Payment Kit (z2qaCNvKMv5GjouKdcDWexv6WqtHbpNPQDnAk)', value: 'z2qaCNvKMv5GjouKdcDWexv6WqtHbpNPQDnAk' },
+				{ name: 'Media Kit (z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9)', value: 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9' },
+				{ name: 'Snap Kit (z2qaEE3vhcouzhZVntfX3WbcvtL1uQhjXKr72)', value: 'z2qaEE3vhcouzhZVntfX3WbcvtL1uQhjXKr72' },
+			],
 			default: 'z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu',
 			description: 'The DID of the component in your blocklet.',
 		},
