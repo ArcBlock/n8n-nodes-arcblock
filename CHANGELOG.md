@@ -1,3 +1,7 @@
+## 0.1.5 (2025-6-5)
+
+- feat: make blocklet component credential more user friendly
+
 ## 0.1.4 (2025-6-4)
 
 - feat: support upload and list media from media kit
