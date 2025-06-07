@@ -1,3 +1,7 @@
+## 0.1.6 (2025-6-7)
+
+- feat: support vote related ops
+
 ## 0.1.5 (2025-6-5)
 
 - feat: make blocklet component credential more user friendly
