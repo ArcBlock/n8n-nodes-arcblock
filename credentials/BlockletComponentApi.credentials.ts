@@ -42,6 +42,7 @@ export class BlockletComponentApi implements ICredentialType {
 				{ name: 'Payment Kit (z2qaCNvKMv5GjouKdcDWexv6WqtHbpNPQDnAk)', value: 'z2qaCNvKMv5GjouKdcDWexv6WqtHbpNPQDnAk' },
 				{ name: 'Media Kit (z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9)', value: 'z8ia1mAXo8ZE7ytGF36L5uBf9kD2kenhqFGp9' },
 				{ name: 'Snap Kit (z2qaEE3vhcouzhZVntfX3WbcvtL1uQhjXKr72)', value: 'z2qaEE3vhcouzhZVntfX3WbcvtL1uQhjXKr72' },
+				{ name: 'Vote Kit (z8iZqTiD6tFwEub6t685e3dj18Ekbo8xvqBSV)', value: 'z8iZqTiD6tFwEub6t685e3dj18Ekbo8xvqBSV' },
 			],
 			default: 'z8ia1WEiBZ7hxURf6LwH21Wpg99vophFwSJdu',
 			description: 'The DID of the component in your blocklet.',
