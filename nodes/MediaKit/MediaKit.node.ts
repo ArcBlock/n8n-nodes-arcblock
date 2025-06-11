@@ -19,6 +19,7 @@ import * as mime from 'mime-types';
 // @ts-ignore
 import isUrl from 'is-url';
 import { joinURL } from 'ufo';
+import { v4 as uuidv4 } from 'uuid';
 
 // Helper to convert stream to buffer if needed
 async function streamToBuffer(stream: Readable): Promise<Buffer> {
@@ -195,7 +196,7 @@ export class MediaKit implements INodeType {
 
 					// Generate uploader ID
 					const uploaderId = 'Uploader';
-					const baseFilename = fileName.split('.').slice(0, -1).join('.') || fileName;
+					const baseFilename = fileName.split('.').slice(0, -1).join('.') || uuidv4();
 					const fileId = `${uploaderId}-${baseFilename.toLowerCase().replace(/[^a-z0-9]/g, '')}-${Date.now()}`;
 
 					// Create metadata for the upload
