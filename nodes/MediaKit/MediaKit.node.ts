@@ -195,7 +195,7 @@ export class MediaKit implements INodeType {
 
 					// Generate uploader ID
 					const uploaderId = 'Uploader';
-					const baseFilename = fileName.split('.').slice(0, -1).join('.');
+					const baseFilename = fileName.split('.').slice(0, -1).join('.') || fileName;
 					const fileId = `${uploaderId}-${baseFilename.toLowerCase().replace(/[^a-z0-9]/g, '')}-${Date.now()}`;
 
 					// Create metadata for the upload
