@@ -87,10 +87,21 @@ export const contentOperations: INodeProperties[] = [
 				action: 'Remove label from content',
 			},
 			{
-				name: 'Update',
+				name: 'Update Content',
 				value: 'update',
-				description: 'Update content',
 				action: 'Update content',
+			},
+			{
+				name: 'Update Settings',
+				value: 'settings',
+				description: 'Update content settings',
+				action: 'Update content settings',
+				displayOptions: {
+					show: {
+						resource: ['discussion', 'blog', 'doc'],
+						operation: ['settings'],
+					},
+				},
 			},
 		],
 		default: 'create',
@@ -187,7 +198,7 @@ export const contentFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['discussion', 'blog', 'doc', 'bookmark'],
-				operation: ['get', 'update', 'publish', 'delete', 'pin', 'addLabel', 'removeLabel', 'addAssignee', 'removeAssignee'],
+				operation: ['get', 'update', 'publish', 'delete', 'pin', 'addLabel', 'removeLabel', 'addAssignee', 'removeAssignee', 'settings'],
 			},
 		},
 		default: '',
@@ -212,8 +223,8 @@ export const contentFields: INodeProperties[] = [
 		type: 'string',
 		displayOptions: {
 			show: {
-				resource: ['blog', 'doc'],
-				operation: ['create', 'update'],
+				resource: ['blog', 'doc', 'discussion'],
+				operation: ['create', 'update', 'settings'],
 			},
 		},
 		default: '',
@@ -313,6 +324,19 @@ export const contentFields: INodeProperties[] = [
 			show: {
 				resource: ['discussion', 'blog', 'doc'],
 				operation: ['addAssignee', 'removeAssignee'],
+			},
+		},
+	},
+	{
+		displayName: 'Cover Image',
+		name: 'cover',
+		type: 'string',
+		default: '',
+		description: 'Cover image for the content',
+		displayOptions: {
+			show: {
+				resource: ['discussion', 'blog', 'doc'],
+				operation: ['settings'],
 			},
 		},
 	},

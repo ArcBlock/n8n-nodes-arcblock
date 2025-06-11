@@ -295,6 +295,31 @@ export class DiscussKit implements INodeType {
 						}
 					}
 
+					if (operation === 'settings') {
+						const id = this.getNodeParameter('id', i) as string;
+						const cover = this.getNodeParameter('cover', i) as string;
+						const slug = this.getNodeParameter('slug', i) as string;
+						const body: IDataObject = { id };
+						if (cover) {
+							body.cover = cover;
+						}
+						if (slug) {
+							body.slug = slug;
+						}
+						if (resource === 'discussion') {
+							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/posts/${id}/settings`, body);
+						}
+						if (resource === 'blog') {
+							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/blogs/${id}/settings`, body);
+						}
+						if (resource === 'doc') {
+							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/docs/${id}/settings`, body);
+						}
+						if (resource === 'bookmark') {
+							// FIXME:
+						}
+					}
+
 					if (operation === 'addLabel') {
 						const id = this.getNodeParameter('id', i) as string;
 						const label = this.getNodeParameter('label', i) as string;

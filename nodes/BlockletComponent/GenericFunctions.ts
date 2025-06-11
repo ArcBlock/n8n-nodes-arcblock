@@ -66,3 +66,8 @@ export async function getBlockletComponentApi(this: IExecuteFunctions | ILoadOpt
 
 	return joinURL(url.origin, component.mountPoint, path);
 }
+
+export async function getBlockletComponentDid(this: IExecuteFunctions | ILoadOptionsFunctions, path: string) {
+	const credentials = await this.getCredentials('blockletComponentApi');
+	return credentials.componentDid;
+}
