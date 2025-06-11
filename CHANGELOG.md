@@ -1,3 +1,7 @@
+## 0.1.7 (2025-6-11)
+
+- feat: support update settings for discuss-kit
+
 ## 0.1.6 (2025-6-7)
 
 - feat: support vote related ops
