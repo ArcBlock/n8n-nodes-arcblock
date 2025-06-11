@@ -1,3 +1,7 @@
+## 0.1.8 (2025-6-11)
+
+- fix: media upload edge case
+
 ## 0.1.7 (2025-6-11)
 
 - feat: support update settings for discuss-kit

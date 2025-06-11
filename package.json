@@ -1,6 +1,6 @@
 {
   "name": "n8n-nodes-arcblock",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "N8N nodes for the ArcBlock platform",
   "keywords": [
     "n8n-community-node-package",
