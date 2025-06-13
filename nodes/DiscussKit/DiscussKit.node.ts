@@ -55,6 +55,10 @@ export class DiscussKit implements INodeType {
 						value: 'bookmark',
 					},
 					{
+						name: 'Comment',
+						value: 'comment',
+					},
+					{
 						name: 'Discussion',
 						value: 'discussion',
 					},
@@ -196,7 +200,12 @@ export class DiscussKit implements INodeType {
 						}
 
 						if (resource === 'discussion') {
-							result = await blockletComponentApiRequest.call(this, 'POST', '/api/posts/drafts', body);
+							result = await blockletComponentApiRequest.call(
+								this,
+								'POST',
+								'/api/posts/drafts',
+								body,
+							);
 							result = await blockletComponentApiRequest.call(
 								this,
 								'POST',
@@ -220,10 +229,15 @@ export class DiscussKit implements INodeType {
 						}
 						if (resource === 'doc') {
 							result = await blockletComponentApiRequest.call(this, 'POST', '/api/docs', body);
-							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/docs/${result.id}`, {
-								...result,
-								...body,
-							});
+							result = await blockletComponentApiRequest.call(
+								this,
+								'PUT',
+								`/api/docs/${result.id}`,
+								{
+									...result,
+									...body,
+								},
+							);
 						}
 						if (resource === 'bookmark') {
 							const url = this.getNodeParameter('url', i) as string;
@@ -252,8 +266,18 @@ export class DiscussKit implements INodeType {
 								},
 							};
 
-							result = await blockletComponentApiRequest.call(this, 'POST', '/api/comments', payload);
-							result = await blockletComponentApiRequest.call(this, 'GET', `/api/bookmarks/${id}`, {});
+							result = await blockletComponentApiRequest.call(
+								this,
+								'POST',
+								'/api/comments',
+								payload,
+							);
+							result = await blockletComponentApiRequest.call(
+								this,
+								'GET',
+								`/api/bookmarks/${id}`,
+								{},
+							);
 						}
 					}
 
@@ -282,10 +306,20 @@ export class DiscussKit implements INodeType {
 							body.assignees = assignees.split(',');
 						}
 						if (resource === 'discussion') {
-							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/posts/${id}`, body);
+							result = await blockletComponentApiRequest.call(
+								this,
+								'PUT',
+								`/api/posts/${id}`,
+								body,
+							);
 						}
 						if (resource === 'blog') {
-							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/blogs/${id}`, body);
+							result = await blockletComponentApiRequest.call(
+								this,
+								'PUT',
+								`/api/blogs/${id}`,
+								body,
+							);
 						}
 						if (resource === 'doc') {
 							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/docs/${id}`, body);
@@ -307,13 +341,28 @@ export class DiscussKit implements INodeType {
 							body.slug = slug;
 						}
 						if (resource === 'discussion') {
-							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/posts/${id}/settings`, body);
+							result = await blockletComponentApiRequest.call(
+								this,
+								'PUT',
+								`/api/posts/${id}/settings`,
+								body,
+							);
 						}
 						if (resource === 'blog') {
-							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/blogs/${id}/settings`, body);
+							result = await blockletComponentApiRequest.call(
+								this,
+								'PUT',
+								`/api/blogs/${id}/settings`,
+								body,
+							);
 						}
 						if (resource === 'doc') {
-							result = await blockletComponentApiRequest.call(this, 'PUT', `/api/docs/${id}/settings`, body);
+							result = await blockletComponentApiRequest.call(
+								this,
+								'PUT',
+								`/api/docs/${id}/settings`,
+								body,
+							);
 						}
 						if (resource === 'bookmark') {
 							// FIXME:
@@ -323,25 +372,37 @@ export class DiscussKit implements INodeType {
 					if (operation === 'addLabel') {
 						const id = this.getNodeParameter('id', i) as string;
 						const label = this.getNodeParameter('label', i) as string;
-						await blockletComponentApiRequest.call(this, 'POST', `/api/posts/${id}/labels`, { label });
+						await blockletComponentApiRequest.call(this, 'POST', `/api/posts/${id}/labels`, {
+							label,
+						});
 					}
 
 					if (operation === 'removeLabel') {
 						const id = this.getNodeParameter('id', i) as string;
 						const label = this.getNodeParameter('label', i) as string;
-						await blockletComponentApiRequest.call(this, 'DELETE', `/api/posts/${id}/labels/${label}`);
+						await blockletComponentApiRequest.call(
+							this,
+							'DELETE',
+							`/api/posts/${id}/labels/${label}`,
+						);
 					}
 
 					if (operation === 'addAssignee') {
 						const id = this.getNodeParameter('id', i) as string;
 						const assignee = this.getNodeParameter('assignee', i) as string;
-						await blockletComponentApiRequest.call(this, 'POST', `/api/posts/${id}/assignees`, { assignee });
+						await blockletComponentApiRequest.call(this, 'POST', `/api/posts/${id}/assignees`, {
+							assignee,
+						});
 					}
 
 					if (operation === 'removeAssignee') {
 						const id = this.getNodeParameter('id', i) as string;
 						const assignee = this.getNodeParameter('assignee', i) as string;
-						await blockletComponentApiRequest.call(this, 'DELETE', `/api/posts/${id}/assignees/${assignee}`);
+						await blockletComponentApiRequest.call(
+							this,
+							'DELETE',
+							`/api/posts/${id}/assignees/${assignee}`,
+						);
 					}
 
 					if (operation === 'publish') {
@@ -366,7 +427,12 @@ export class DiscussKit implements INodeType {
 
 					if (operation === 'delete') {
 						const id = this.getNodeParameter('id', i) as string;
-						result = await blockletComponentApiRequest.call(this, 'DELETE', `/api/${resource}s/${id}`, {});
+						result = await blockletComponentApiRequest.call(
+							this,
+							'DELETE',
+							`/api/${resource}s/${id}`,
+							{},
+						);
 					}
 
 					if (operation === 'get') {
@@ -388,7 +454,13 @@ export class DiscussKit implements INodeType {
 							qs.boardId = boardId;
 						}
 
-						result = await blockletComponentApiRequest.call(this, 'GET', `/api/${resource}s`, {}, qs);
+						result = await blockletComponentApiRequest.call(
+							this,
+							'GET',
+							`/api/${resource}s`,
+							{},
+							qs,
+						);
 						result = Array.isArray(result) ? result : result.data;
 
 						let lastPost = result.pop();
@@ -414,6 +486,56 @@ export class DiscussKit implements INodeType {
 						if (!returnAll) {
 							result = result.splice(0, limit);
 						}
+					}
+				}
+
+				if (resource === 'comment') {
+					if (operation === 'create') {
+						const objectId = this.getNodeParameter('objectId', i) as string;
+						const content = this.getNodeParameter('content', i) as string;
+						const body: IDataObject = { content, object: { id: objectId } };
+						result = await blockletComponentApiRequest.call(this, 'POST', `/api/comments`, body);
+					}
+					if (operation === 'update') {
+						const commentId = this.getNodeParameter('commentId', i) as string;
+						const content = this.getNodeParameter('content', i) as string;
+						const body: IDataObject = { content, updatedAt: new Date().toISOString() };
+						result = await blockletComponentApiRequest.call(
+							this,
+							'PUT',
+							`/api/comments/${commentId}`,
+							body,
+						);
+					}
+					if (operation === 'delete') {
+						const commentId = this.getNodeParameter('commentId', i) as string;
+						result = await blockletComponentApiRequest.call(
+							this,
+							'DELETE',
+							`/api/comments/${commentId}`,
+						);
+					}
+					if (operation === 'pin') {
+						const commentId = this.getNodeParameter('commentId', i) as string;
+						result = await blockletComponentApiRequest.call(
+							this,
+							'PUT',
+							`/api/posts/${commentId}/pinned`,
+						);
+					}
+					if (operation === 'list') {
+						const objectId = this.getNodeParameter('objectId', i) as string;
+						const limit = this.getNodeParameter('limit', i, 50);
+						const qs: IDataObject = {
+							objectId,
+							includeReplies: 1,
+							initialRepliesLimit: -1,
+							order: 'desc',
+							embed: 'replies,rating',
+              limit,
+							size: limit,
+						};
+						result = await blockletComponentApiRequest.call(this, 'GET', `/api/comments`, {}, qs);
 					}
 				}
 

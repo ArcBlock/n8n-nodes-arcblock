@@ -10,7 +10,7 @@ export const contentOperations: INodeProperties[] = [
 		required: true,
 		displayOptions: {
 			show: {
-				resource: ['discussion', 'blog', 'bookmark', 'doc'],
+				resource: ['discussion', 'blog', 'doc', 'bookmark', 'comment'],
 			},
 		},
 		options: [
@@ -19,12 +19,22 @@ export const contentOperations: INodeProperties[] = [
 				value: 'addAssignee',
 				description: 'Add assignee to content',
 				action: 'Add assignee to content',
+				displayOptions: {
+					show: {
+						resource: ['discussion', 'blog', 'doc'],
+					},
+				},
 			},
 			{
 				name: 'Add Label',
 				value: 'addLabel',
 				description: 'Add label to content',
 				action: 'Add label to content',
+				displayOptions: {
+					show: {
+						resource: ['discussion', 'blog', 'doc', 'bookmark'],
+					},
+				},
 			},
 			{
 				name: 'Create',
@@ -57,7 +67,7 @@ export const contentOperations: INodeProperties[] = [
 				action: 'Pin content',
 				displayOptions: {
 					show: {
-						resource: ['discussion'],
+						resource: ['discussion', 'comment'],
 						operation: ['pin'],
 					},
 				},
@@ -79,17 +89,44 @@ export const contentOperations: INodeProperties[] = [
 				value: 'removeAssignee',
 				description: 'Remove assignee from content',
 				action: 'Remove assignee from content',
+				displayOptions: {
+					show: {
+						resource: ['discussion', 'blog', 'doc'],
+					},
+				},
 			},
 			{
 				name: 'Remove Label',
 				value: 'removeLabel',
 				description: 'Remove label from content',
 				action: 'Remove label from content',
+				displayOptions: {
+					show: {
+						resource: ['discussion', 'blog', 'doc'],
+					},
+				},
+			},
+			{
+				name: 'Unpin',
+				value: 'unpin',
+				description: 'Unpin content',
+				action: 'Unpin content',
+				displayOptions: {
+					show: {
+						resource: ['discussion', 'comment'],
+						operation: ['unpin'],
+					},
+				},
 			},
 			{
 				name: 'Update Content',
 				value: 'update',
 				action: 'Update content',
+				displayOptions: {
+					show: {
+						resource: ['discussion', 'blog', 'doc', 'comment'],
+					},
+				},
 			},
 			{
 				name: 'Update Settings',
@@ -130,7 +167,7 @@ export const contentFields: INodeProperties[] = [
 		required: true,
 		displayOptions: {
 			show: {
-				resource: ['discussion', 'blog', 'doc'],
+				resource: ['discussion', 'blog', 'doc', 'comment'],
 				operation: ['create', 'update'],
 			},
 		},
@@ -198,7 +235,19 @@ export const contentFields: INodeProperties[] = [
 		displayOptions: {
 			show: {
 				resource: ['discussion', 'blog', 'doc', 'bookmark'],
-				operation: ['get', 'update', 'publish', 'delete', 'pin', 'addLabel', 'removeLabel', 'addAssignee', 'removeAssignee', 'settings'],
+				operation: [
+					'get',
+					'update',
+					'publish',
+					'delete',
+					'pin',
+					'unpin',
+					'addLabel',
+					'removeLabel',
+					'addAssignee',
+					'removeAssignee',
+					'settings',
+				],
 			},
 		},
 		default: '',
@@ -277,7 +326,7 @@ export const contentFields: INodeProperties[] = [
 		type: 'boolean',
 		displayOptions: {
 			show: {
-				resource: ['discussion', 'blog', 'doc', 'bookmark'],
+				resource: ['discussion', 'blog', 'doc', 'bookmark', 'comment'],
 				operation: ['list'],
 			},
 		},
@@ -290,7 +339,7 @@ export const contentFields: INodeProperties[] = [
 		type: 'number',
 		displayOptions: {
 			show: {
-				resource: ['discussion', 'blog', 'doc', 'bookmark'],
+				resource: ['discussion', 'blog', 'doc', 'bookmark', 'comment'],
 				operation: ['list'],
 				returnAll: [false],
 			},
@@ -339,5 +388,34 @@ export const contentFields: INodeProperties[] = [
 				operation: ['settings'],
 			},
 		},
+	},
+
+	{
+		displayName: 'Object ID',
+		name: 'objectId',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['comment'],
+				operation: ['create', 'list'],
+			},
+		},
+		default: '',
+		description: 'ID of the object',
+	},
+	{
+		displayName: 'Comment ID',
+		name: 'commentId',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['comment'],
+				operation: ['update', 'delete', 'pin', 'unpin'],
+			},
+		},
+		default: '',
+		description: 'ID of the comment',
 	},
 ];
