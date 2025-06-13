@@ -1,3 +1,7 @@
+## 0.1.10 (2025-6-13)
+
+- feat: support comment actions for discuss-kit
+
 ## 0.1.9 (2025-6-11)
 
 - fix: media upload uniq id
