@@ -1,3 +1,7 @@
+## 0.1.11 (2025-7-7)
+
+- feat: support delete spam comments in batch
+
 ## 0.1.10 (2025-6-13)
 
 - feat: support comment actions for discuss-kit
