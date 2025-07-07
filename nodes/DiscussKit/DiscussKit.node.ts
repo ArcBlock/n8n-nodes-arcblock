@@ -515,6 +515,14 @@ export class DiscussKit implements INodeType {
 							`/api/comments/${commentId}`,
 						);
 					}
+					if (operation === 'adminDelete') {
+						const userDid = this.getNodeParameter('userDid', i) as string;
+						result = await blockletComponentApiRequest.call(
+							this,
+							'DELETE',
+							`/api/comments?userDid=${userDid}`,
+						);
+					}
 					if (operation === 'pin') {
 						const commentId = this.getNodeParameter('commentId', i) as string;
 						result = await blockletComponentApiRequest.call(

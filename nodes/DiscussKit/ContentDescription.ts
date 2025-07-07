@@ -37,6 +37,17 @@ export const contentOperations: INodeProperties[] = [
 				},
 			},
 			{
+				name: 'Admin Delete',
+				value: 'adminDelete',
+				description: 'Delete comment by admin permanently',
+				action: 'Admin delete comment',
+				displayOptions: {
+					show: {
+						resource: ['comment'],
+					},
+				},
+			},
+			{
 				name: 'Create',
 				value: 'create',
 				description: 'Create content',
@@ -417,5 +428,19 @@ export const contentFields: INodeProperties[] = [
 		},
 		default: '',
 		description: 'ID of the comment',
+	},
+	{
+		displayName: 'User DID',
+		name: 'userDid',
+		type: 'string',
+		required: true,
+		displayOptions: {
+			show: {
+				resource: ['comment'],
+				operation: ['adminDelete'],
+			},
+		},
+		default: '',
+		description: 'ID of the user',
 	},
 ];
