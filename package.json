@@ -48,7 +48,8 @@
       "dist/nodes/PaymentKit/PaymentKit.node.js",
       "dist/nodes/SnapKit/SnapKit.node.js",
       "dist/nodes/MediaKit/MediaKit.node.js",
-      "dist/nodes/VoteKit/VoteKit.node.js"
+      "dist/nodes/VoteKit/VoteKit.node.js",
+      "dist/nodes/TwitterMediaUpload/TwitterMediaUpload.node.js"
     ]
   },
   "devDependencies": {
