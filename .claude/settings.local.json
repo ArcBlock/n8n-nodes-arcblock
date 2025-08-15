@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(rm:*)",
+      "Bash(mkdir:*)",
+      "Bash(pnpm build:*)",
+      "Bash(pnpm lint:*)"
+    ],
+    "defaultMode": "acceptEdits"
+  }
+}
