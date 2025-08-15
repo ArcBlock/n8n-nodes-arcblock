@@ -1,3 +1,7 @@
+## 0.1.12 (2025-8-15)
+
+- feat: support twitter media upload
+
 ## 0.1.11 (2025-7-7)
 
 - feat: support delete spam comments in batch
@@ -41,4 +45,3 @@
 ## 0.1.1 (2025-5-30)
 
 - feat: initial release
-
